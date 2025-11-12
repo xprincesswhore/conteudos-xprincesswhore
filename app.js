@@ -1,58 +1,57 @@
-// Config
-const ASSETS_JSON = 'assets/assets.json';
-const SLIDE_DURATION = 1500; // ms (1.5s as requested)
-const TRANSITION_MS = 600; // slides container transition
+document.addEventListener('DOMContentLoaded', () => {
+  const carouselContainer = document.querySelector('.carousel-container');
+  const items = document.querySelectorAll('.carousel-item');
+  const totalItems = items.length;
+  let currentIndex = 0;
 
-// DOM refs
-const slidesEl = document.getElementById('slides');
-const indicatorsEl = document.getElementById('indicators');
-const prevBtn = document.getElementById('prev');
-const nextBtn = document.getElementById('next');
-const carouselRoot = document.getElementById('carousel');
+  function showNextItem() {
+    items[currentIndex].classList.remove('active');
+    currentIndex = (currentIndex + 1) % totalItems;
+    items[currentIndex].classList.add('active');
+    carouselContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+  }
 
-let slides = [];
-let dots = [];
-let idx = 0;
-let timer = null;
-let playing = true;
+  // Alterna imagem/vídeo a cada 1.5s com transição suave
+  setInterval(showNextItem, 1500);
 
-// load header avatar background image (use an existing asset or fallback gradient)
-(function setHeaderAvatar(){
-  const headerAvatar = document.getElementById('headerAvatar');
-  // default image path (you can replace with any file in assets/)
-  headerAvatar.style.background = 'url(\"assets/dreamina-2025-10-29-8921-I want you to remove the background and ....jpg\") center/cover no-repeat';
-  headerAvatar.style.backgroundSize = 'cover';
-})();
-
-// fetch assets manifest, build slides
-fetch(ASSETS_JSON)
-  .then(r => r.json())
-  .then(data => buildSlides(data.files || []))
-  .catch(err => {
-    console.error('Erro ao carregar assets.json', err);
-    // fallback: build 3 placeholders
-    buildSlides([]);
+  // Efeito de zoom e brilho nas transições
+  items.forEach(item => {
+    item.addEventListener('transitionstart', () => {
+      item.style.transform = 'scale(1.05)';
+      item.style.filter = 'brightness(1.1)';
+    });
+    item.addEventListener('transitionend', () => {
+      item.style.transform = 'scale(1)';
+      item.style.filter = 'brightness(1)';
+    });
   });
 
-function buildSlides(files){
-  slidesEl.innerHTML = '';
-  indicatorsEl.innerHTML = '';
+  // Animação suave no botão de pagamento
+  const pagamentoBtn = document.querySelector('.pagamento-btn');
+  pagamentoBtn.addEventListener('mouseenter', () => {
+    pagamentoBtn.style.transition = 'all 0.6s ease';
+    pagamentoBtn.style.transform = 'scale(1.1)';
+    pagamentoBtn.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.6)';
+  });
 
-  const effective = files.length ? files : [
-    // fallback placeholders (should be replaced)
-    'https://picsum.photos/1000/600?random=101',
-    'https://picsum.photos/1000/600?random=102',
-    'https://picsum.photos/1000/600?random=103'
-  ];
+  pagamentoBtn.addEventListener('mouseleave', () => {
+    pagamentoBtn.style.transform = 'scale(1)';
+    pagamentoBtn.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.3)';
+  });
 
-  effective.forEach((file, i) => {
-    const isVideo = /\.(mp4|webm|mov)$/i.test(file);
-    const slide = document.createElement('div');
-    slide.className = 'slide' + (i === 0 ? ' active' : '');
-    slide.dataset.type = isVideo ? 'video' : 'image';
+  // Redirecionar para pagamento
+  pagamentoBtn.addEventListener('click', () => {
+    window.location.href = 'https://go.invictuspay.app.br/uiu36mqyaf';
+  });
 
-    if(isVideo){
-      slide.innerHTML = `<video muted playsinline preload="metadata" loop>
+  // Animações suaves de entrada dos elementos
+  const fadeElements = document.querySelectorAll('.fade-in');
+  fadeElements.forEach((el, index) => {
+    setTimeout(() => {
+      el.classList.add('visible');
+    }, index * 200);
+  });
+});      slide.innerHTML = `<video muted playsinline preload="metadata" loop>
         <source src="assets/${file}" type="video/mp4">
         Seu navegador não suporta vídeo.
       </video>
