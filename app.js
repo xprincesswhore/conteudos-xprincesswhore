@@ -1,40 +1,52 @@
-// Caminho do arquivo JSON com as imagens
-const jsonPath = "assets/assets.json";
+document.addEventListener("DOMContentLoaded", async () => {
+  const carousel = document.querySelector(".carousel");
+  const btnPagamento = document.querySelectorAll(".btn-pagamento");
+  const PAGAMENTO_LINK = "https://go.invictuspay.app.br/uiu36mqyaf";
 
-// Seleciona o container do carrossel
-const carousel = document.getElementById("carousel");
+  // Aplica o link em todos os botões de pagamento
+  btnPagamento.forEach(btn => btn.href = PAGAMENTO_LINK);
 
-// Link fixo de pagamento
-const linkPagamento = "https://go.invictuspay.app.br/uiu36mqyaf";
+  // Busca automaticamente as imagens da pasta /assets/
+  async function carregarImagens() {
+    try {
+      const response = await fetch("assets/");
+      const html = await response.text();
+      const matches = [...html.matchAll(/href="([^"]+\.(jpg|jpeg|png|gif|webp))"/gi)];
+      return matches.map(m => "assets/" + m[1]);
+    } catch (err) {
+      console.error("Erro ao buscar imagens:", err);
+      return [];
+    }
+  }
 
-// Função para carregar o JSON e iniciar o carrossel
-fetch(jsonPath)
-  .then(res => res.json())
-  .then(data => {
-    if (!data.files || !Array.isArray(data.files)) {
-      console.error("JSON inválido. Esperado: { files: [] }");
+  // Inicializa o carrossel
+  async function iniciarCarrossel() {
+    const imagens = await carregarImagens();
+
+    if (imagens.length === 0) {
+      carousel.innerHTML = "<p style='color:white;text-align:center;'>Nenhuma imagem encontrada.</p>";
       return;
     }
 
-    // Cria slides dinamicamente
-    data.files.forEach((file, index) => {
-      const slide = document.createElement("div");
-      slide.className = "slide fade";
-      slide.style.backgroundImage = `url('assets/${file}')`;
-      if (index === 0) slide.classList.add("active");
-      carousel.appendChild(slide);
-    });
+    let index = 0;
+    const imgElement = document.createElement("img");
+    imgElement.src = imagens[index];
+    imgElement.classList.add("fade-in");
+    carousel.appendChild(imgElement);
 
-    iniciarCarrossel();
-  })
-  .catch(err => console.error("Erro ao carregar imagens:", err));
+    setInterval(() => {
+      index = (index + 1) % imagens.length;
+      const novaImg = document.createElement("img");
+      novaImg.src = imagens[index];
+      novaImg.classList.add("fade-in");
 
-// Função que inicia o carrossel com animação
-function iniciarCarrossel() {
-  const slides = document.querySelectorAll(".slide");
-  let current = 0;
+      carousel.innerHTML = "";
+      carousel.appendChild(novaImg);
+    }, 1500);
+  }
 
-  function showNextSlide() {
+  iniciarCarrossel();
+});  function showNextSlide() {
     slides[current].classList.remove("active");
     current = (current + 1) % slides.length;
     slides[current].classList.add("active");
