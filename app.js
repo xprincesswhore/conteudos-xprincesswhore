@@ -1,40 +1,58 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const carousel = document.querySelector(".carousel");
-  const btnPagamento = document.querySelectorAll(".btn-pagamento");
-  const PAGAMENTO_LINK = "https://go.invictuspay.app.br/uiu36mqyaf";
+document.addEventListener("DOMContentLoaded", () => {
+  // Lista manual de imagens da pasta /assets
+  const imageFiles = [
+    "20251014_052443.jpg",
+    "20251014_052819.jpg",
+    "20251014_052822.jpg",
+    "dreamina-2025-10-29-8921-I want you to remove the background and ....jpg"
+  ];
 
-  // Aplica o link em todos os botões de pagamento
-  btnPagamento.forEach(btn => btn.href = PAGAMENTO_LINK);
+  const carousel = document.getElementById("carousel");
+  const paymentLink = "https://go.invictuspay.app.br/uiu36mqyaf";
 
-  // Busca automaticamente as imagens da pasta /assets/
-  async function carregarImagens() {
-    try {
-      const response = await fetch("assets/");
-      const html = await response.text();
-      const matches = [...html.matchAll(/href="([^"]+\.(jpg|jpeg|png|gif|webp))"/gi)];
-      return matches.map(m => "assets/" + m[1]);
-    } catch (err) {
-      console.error("Erro ao buscar imagens:", err);
-      return [];
-    }
+  // Função para criar o carrossel
+  imageFiles.forEach((file, index) => {
+    const img = document.createElement("img");
+    img.src = `assets/${file}`;
+    img.alt = `Demonstração ${index + 1}`;
+    img.classList.add("carousel-item");
+    if (index === 0) img.classList.add("active");
+    carousel.appendChild(img);
+  });
+
+  const items = document.querySelectorAll(".carousel-item");
+  let current = 0;
+
+  function showNextImage() {
+    items[current].classList.remove("active");
+    current = (current + 1) % items.length;
+    items[current].classList.add("active");
   }
 
-  // Inicializa o carrossel
-  async function iniciarCarrossel() {
-    const imagens = await carregarImagens();
+  // Troca a cada 1.5s
+  setInterval(showNextImage, 1500);
 
-    if (imagens.length === 0) {
-      carousel.innerHTML = "<p style='color:white;text-align:center;'>Nenhuma imagem encontrada.</p>";
-      return;
-    }
+  // Botão de pagamento
+  document.querySelectorAll(".button, .cta-button").forEach(btn => {
+    btn.href = paymentLink;
+    btn.addEventListener("click", () => {
+      btn.classList.add("clicked");
+      setTimeout(() => btn.classList.remove("clicked"), 400);
+    });
+  });
 
-    let index = 0;
-    const imgElement = document.createElement("img");
-    imgElement.src = imagens[index];
-    imgElement.classList.add("fade-in");
-    carousel.appendChild(imgElement);
+  // Animações suaves nos elementos
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("fade-in");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
 
-    setInterval(() => {
+  document.querySelectorAll(".fade").forEach(el => observer.observe(el));
+});    setInterval(() => {
       index = (index + 1) % imagens.length;
       const novaImg = document.createElement("img");
       novaImg.src = imagens[index];
