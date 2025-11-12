@@ -1,40 +1,186 @@
-:root{
-  --bg:#1e1e1e;
-  --card:#2a2a2a;
-  --muted:#BFB8C9;
-  --accent:#9b59ff;
-  --accent-2:#6f2a7a;
-  --glass: rgba(255,255,255,0.03);
-  --slide-duration: 1.5s; /* fallback */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #1a1a1a;
+  font-family: 'Poppins', sans-serif;
+  color: #f4f4f4;
+  overflow-x: hidden;
 }
 
-/* reset */
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;font-family:Inter, "Helvetica Neue", Arial, sans-serif;background:linear-gradient(180deg,var(--bg) 0%, #171717 100%);color:var(--muted);-webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale}
-
-/* layout */
-.wrap{max-width:98vw;margin:2.5vh auto;padding:2.5vh;display:grid;grid-template-columns:1fr;gap:1.25rem}
-.hero{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));border-radius:1rem;padding:1.125rem;display:flex;gap:1.125rem;align-items:center;box-shadow:0 4vh 8vh rgba(0,0,0,0.6);position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(800px 200px at 10% 10%, rgba(155,89,255,0.06), transparent 10%), radial-gradient(500px 150px at 90% 80%, rgba(111,42,122,0.04), transparent 10%);pointer-events:none}
-
-/* header avatar uses an image background; default text if missing */
-.avatar{
-  width:15.5vw; min-width:6.5rem; max-width:10rem;
-  height:15.5vw; min-height:6.5rem; max-height:10rem;
-  border-radius:1rem;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:1.1rem;flex-shrink:0;box-shadow:0 1.5rem 3rem rgba(111,42,122,0.35), inset 0 -0.5rem 3rem rgba(0,0,0,0.2);
-  transform:translateY(0);transition:transform 0.6s cubic-bezier(.2,.9,.2,1)
+.container {
+  max-width: 90%;
+  margin: 2% auto;
+  background: #2a2a2a;
+  border-radius: 2%;
+  box-shadow: 0 0 2vw rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  animation: fadeIn 1.8s ease forwards;
 }
-.avatar.small{width:12vw;height:12vw}
-.hero:hover .avatar{transform:translateY(-0.3rem) rotate(-2deg) scale(1.02)}
 
-.hero-info{flex:1}
-.title{font-size:1.15rem;color:#fff;font-weight:800;letter-spacing:0.02em;margin:0 0 0.35rem;display:flex;align-items:center;gap:0.5rem}
-.title .glow{display:inline-block;padding:0.28rem 0.6rem;border-radius:999px;background:linear-gradient(90deg, rgba(155,89,255,0.14), rgba(111,42,122,0.12));color:var(--accent);font-weight:700;font-size:0.75rem}
-.subtitle{margin:0;color:var(--muted);font-size:0.9rem;line-height:1.3}
+.header {
+  position: relative;
+  width: 100%;
+  height: 30vh;
+  overflow: hidden;
+  border-bottom: 0.5vh solid #800080;
+}
 
-/* price */
-.price-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem}
+.header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.8);
+  animation: slowZoom 12s ease-in-out infinite alternate;
+}
+
+.header-title {
+  position: absolute;
+  bottom: 5%;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 2.5vh;
+  font-weight: bold;
+  background: rgba(128, 0, 128, 0.6);
+  padding: 1.5vh 0;
+  backdrop-filter: blur(4px);
+  text-shadow: 0 0 10px rgba(255,255,255,0.6);
+  animation: fadeInUp 2s ease;
+}
+
+/* --- CARROSSEL --- */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 35vh;
+  overflow: hidden;
+}
+
+.carousel-item {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 1.5s ease, transform 1.5s ease;
+}
+
+.carousel-item.active {
+  opacity: 1;
+  transform: scale(1.05);
+  z-index: 2;
+}
+
+/* --- CONTEÚDO --- */
+.content {
+  padding: 3%;
+}
+
+.content h2 {
+  color: #c084f5;
+  font-size: 2.2vh;
+  margin-bottom: 1vh;
+  animation: fadeInUp 2s ease;
+}
+
+.content p {
+  font-size: 1.8vh;
+  color: #e0e0e0;
+  margin-bottom: 1.5vh;
+  line-height: 1.6;
+  animation: fadeIn 1.8s ease;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 2vh 0;
+}
+
+li {
+  font-size: 1.8vh;
+  margin-bottom: 1vh;
+  color: #d9d9d9;
+  position: relative;
+  padding-left: 2.5vh;
+}
+
+li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #c084f5;
+  font-size: 2vh;
+}
+
+/* --- BOTÃO --- */
+.button-container {
+  text-align: center;
+  margin: 4vh 0;
+}
+
+.pagamento-btn {
+  background: linear-gradient(90deg, #800080, #b84ddb);
+  color: #fff;
+  padding: 1.5vh 4vw;
+  border: none;
+  border-radius: 0.8em;
+  font-size: 1.9vh;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(128, 0, 128, 0.6);
+  transition: all 0.6s ease;
+  animation: pulseGlow 2s infinite;
+}
+
+.pagamento-btn:hover {
+  background: linear-gradient(90deg, #b84ddb, #800080);
+  transform: scale(1.08);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+}
+
+/* --- RODAPÉ --- */
+.footer {
+  text-align: center;
+  font-size: 1.4vh;
+  color: #aaa;
+  padding: 2vh;
+  background: #1a1a1a;
+  border-top: 0.3vh solid #800080;
+}
+
+/* --- ANIMAÇÕES --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slowZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 10px rgba(128, 0, 128, 0.5); }
+  50% { box-shadow: 0 0 25px rgba(184, 77, 219, 0.9); }
+  100% { box-shadow: 0 0 10px rgba(128, 0, 128, 0.5); }
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 768px) {
+  .header-title { font-size: 2vh; }
+  .content h2 { font-size: 2vh; }
+  .content p, li { font-size: 1.6vh; }
+  .pagamento-btn { font-size: 1.7vh; padding: 1.2vh 6vw; }
+}.price-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem}
 .price{background:linear-gradient(180deg, rgba(155,89,255,0.12), rgba(111,42,122,0.08));padding:0.5rem 0.9rem;border-radius:0.75rem;color:#fff;font-weight:800;font-size:1rem}
 .price small{display:block;font-weight:400;color:rgba(255,255,255,0.75);font-size:0.72rem;margin-top:0.25rem}
 
