@@ -1,40 +1,60 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const carouselContainer = document.querySelector('.carousel-container');
-  const items = document.querySelectorAll('.carousel-item');
-  const totalItems = items.length;
-  let currentIndex = 0;
+// Caminho do arquivo JSON com as imagens
+const jsonPath = "assets/images.json";
 
-  // Função para alternar os slides com fade e zoom suave
-  function showNextItem() {
-    const currentItem = items[currentIndex];
-    currentItem.classList.remove('active');
-    currentItem.style.opacity = '0';
-    currentItem.style.transform = 'scale(1)';
+// Seleciona o container do carrossel
+const carousel = document.getElementById("carousel");
 
-    currentIndex = (currentIndex + 1) % totalItems;
+// Link fixo de pagamento
+const linkPagamento = "https://go.invictuspay.app.br/uiu36mqyaf";
 
-    const nextItem = items[currentIndex];
-    nextItem.classList.add('active');
-    nextItem.style.opacity = '1';
-    nextItem.style.transform = 'scale(1.05)';
+// Função para carregar o JSON e iniciar o carrossel
+fetch(jsonPath)
+  .then(res => res.json())
+  .then(data => {
+    if (!data.files || !Array.isArray(data.files)) {
+      console.error("JSON inválido. Esperado: { files: [] }");
+      return;
+    }
+
+    // Cria slides dinamicamente
+    data.files.forEach((file, index) => {
+      const slide = document.createElement("div");
+      slide.className = "slide fade";
+      slide.style.backgroundImage = `url('assets/${file}')`;
+      if (index === 0) slide.classList.add("active");
+      carousel.appendChild(slide);
+    });
+
+    iniciarCarrossel();
+  })
+  .catch(err => console.error("Erro ao carregar imagens:", err));
+
+// Função que inicia o carrossel com animação
+function iniciarCarrossel() {
+  const slides = document.querySelectorAll(".slide");
+  let current = 0;
+
+  function showNextSlide() {
+    slides[current].classList.remove("active");
+    current = (current + 1) % slides.length;
+    slides[current].classList.add("active");
   }
 
-  // Tempo de transição entre slides (4 segundos)
-  setInterval(showNextItem, 4000);
+  // Troca a cada 1.5s
+  setInterval(showNextSlide, 1500);
+}
 
-  // Efeito de brilho e suavidade na transição
-  items.forEach(item => {
-    item.style.transition = 'opacity 1.5s ease, transform 1.5s ease';
-    if (item.tagName === 'IMG' || item.tagName === 'VIDEO') {
-      item.style.objectFit = 'cover';
-      item.style.width = '100%';
-      item.style.height = '100%';
-    }
-  });
-
-  // Animação no botão de pagamento
-  const pagamentoBtn = document.querySelector('.pagamento-btn');
-  if (pagamentoBtn) {
+// Atualiza todos os botões de pagamento automaticamente
+document.querySelectorAll("a, button").forEach(el => {
+  if (
+    el.textContent.toLowerCase().includes("comprar") ||
+    el.textContent.toLowerCase().includes("pagamento") ||
+    el.classList.contains("pagamento-btn")
+  ) {
+    el.href = linkPagamento;
+    el.target = "_blank";
+  }
+});  if (pagamentoBtn) {
     pagamentoBtn.addEventListener('mouseenter', () => {
       pagamentoBtn.style.transition = 'all 0.6s ease';
       pagamentoBtn.style.transform = 'scale(1.08)';
