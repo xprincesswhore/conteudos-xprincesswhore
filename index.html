@@ -1,40 +1,60 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Midnight Diaries — Pacote de Vídeos</title>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vlogs da Garota Emo</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/4e8ce5f77b.js" crossorigin="anonymous"></script>
 </head>
 <body>
+  <div class="container">
+    
+    <!-- Cabeçalho -->
+    <header class="header">
+      <img src="assets/dreamina-2025-10-29-8921-I want you to remove the background and ....jpg" alt="Garota Emo">
+      <div class="header-title">✨ Vlogs Pessoais da Garota Emo ✨</div>
+    </header>
 
-<div class="wrap">
-  <!-- HERO -->
-  <header class="hero" role="banner">
-    <div class="avatar floating" id="headerAvatar" aria-hidden="true"></div>
-
-    <div class="hero-info">
-      <h1 class="title">
-        Midnight Diaries
-        <span class="glow">Conteúdo pessoal — R$20</span>
-      </h1>
-      <p class="subtitle">Vlogs íntimos, estéticos e sem cunho sexual — rotinas, arte, pensamentos, playlists e mini-performances. Pacote único com vídeos exclusivos.</p>
-      <div class="muted" style="margin-top:0.6rem">Entrega digital instantânea após pagamento • Formato MP4/WEBM • Sem assinatura</div>
+    <!-- Carrossel -->
+    <div class="carousel-container" id="carousel">
+      <!-- As imagens serão carregadas dinamicamente do JSON -->
     </div>
 
-    <div class="price-wrap">
-      <div class="price">R$ 20 <small>Pacote único — todos os clipes</small></div>
-      <div style="height:0.5rem"></div>
-      <div class="muted" style="text-align:right;font-size:0.85rem">Entrega: link privado</div>
-    </div>
-  </header>
+    <!-- Conteúdo -->
+    <section class="content">
+      <h2>🖤 Sobre os vídeos</h2>
+      <p>Oi! Eu sou uma garota emo e decidi compartilhar um pedacinho do meu mundo. São vídeos do meu dia a dia — meus passeios, meu quarto, músicas que escuto, pensamentos aleatórios e um pouco da minha rotina. Nada de conteúdo adulto, só eu sendo eu. 🖤</p>
 
-  <!-- CAROUSEL + DETAILS -->
-  <section class="grid" aria-labelledby="section-title">
-    <!-- Left: carousel -->
-    <div>
+      <h2>🎬 O que você vai receber</h2>
+      <ul>
+        <li>Pacote com 5 vídeos exclusivos gravados por mim</li>
+        <li>Conteúdo leve, autêntico e totalmente pessoal</li>
+        <li>Entrega imediata após o pagamento</li>
+        <li>Preço fixo: <strong>R$20,00</strong></li>
+      </ul>
+
+      <div class="button-container">
+        <a href="https://go.invictuspay.app.br/uiu36mqyaf" target="_blank" class="pagamento-btn">
+          💜 Comprar Pacote Agora 💜
+        </a>
+      </div>
+
+      <p>Obrigada por apoiar meu conteúdo independente. Cada compra ajuda a manter vivo o meu cantinho criativo. 🌙</p>
+    </section>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+      © 2025 • Vlogs da Garota Emo — Todos os direitos reservados
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>    <div>
       <div class="carousel" id="carousel" aria-roledescription="carousel">
         <div class="slides" id="slides" style="--slide-duration:1.5s;"></div>
 
