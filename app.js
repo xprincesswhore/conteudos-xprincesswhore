@@ -1,5 +1,5 @@
 // Caminho do arquivo JSON com as imagens
-const jsonPath = "assets/images.json";
+const jsonPath = "assets/assets.json";
 
 // Seleciona o container do carrossel
 const carousel = document.getElementById("carousel");
@@ -41,7 +41,7 @@ function iniciarCarrossel() {
   }
 
   // Troca a cada 1.5s
-  setInterval(showNextSlide, 1500);
+  setInterval(showNextSlide, 2500);
 }
 
 // Atualiza todos os botões de pagamento automaticamente
