@@ -4,37 +4,63 @@ document.addEventListener('DOMContentLoaded', () => {
   const totalItems = items.length;
   let currentIndex = 0;
 
+  // Função para alternar os slides com fade e zoom suave
   function showNextItem() {
-    items[currentIndex].classList.remove('active');
+    const currentItem = items[currentIndex];
+    currentItem.classList.remove('active');
+    currentItem.style.opacity = '0';
+    currentItem.style.transform = 'scale(1)';
+
     currentIndex = (currentIndex + 1) % totalItems;
-    items[currentIndex].classList.add('active');
-    carouselContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+    const nextItem = items[currentIndex];
+    nextItem.classList.add('active');
+    nextItem.style.opacity = '1';
+    nextItem.style.transform = 'scale(1.05)';
   }
 
-  // Alterna imagem/vídeo a cada 1.5s com transição suave
-  setInterval(showNextItem, 1500);
+  // Tempo de transição entre slides (4 segundos)
+  setInterval(showNextItem, 4000);
 
-  // Efeito de zoom e brilho nas transições
+  // Efeito de brilho e suavidade na transição
   items.forEach(item => {
-    item.addEventListener('transitionstart', () => {
-      item.style.transform = 'scale(1.05)';
-      item.style.filter = 'brightness(1.1)';
-    });
-    item.addEventListener('transitionend', () => {
-      item.style.transform = 'scale(1)';
-      item.style.filter = 'brightness(1)';
-    });
+    item.style.transition = 'opacity 1.5s ease, transform 1.5s ease';
+    if (item.tagName === 'IMG' || item.tagName === 'VIDEO') {
+      item.style.objectFit = 'cover';
+      item.style.width = '100%';
+      item.style.height = '100%';
+    }
   });
 
-  // Animação suave no botão de pagamento
+  // Animação no botão de pagamento
   const pagamentoBtn = document.querySelector('.pagamento-btn');
-  pagamentoBtn.addEventListener('mouseenter', () => {
-    pagamentoBtn.style.transition = 'all 0.6s ease';
-    pagamentoBtn.style.transform = 'scale(1.1)';
-    pagamentoBtn.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.6)';
-  });
+  if (pagamentoBtn) {
+    pagamentoBtn.addEventListener('mouseenter', () => {
+      pagamentoBtn.style.transition = 'all 0.6s ease';
+      pagamentoBtn.style.transform = 'scale(1.08)';
+      pagamentoBtn.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.5)';
+    });
 
-  pagamentoBtn.addEventListener('mouseleave', () => {
+    pagamentoBtn.addEventListener('mouseleave', () => {
+      pagamentoBtn.style.transform = 'scale(1)';
+      pagamentoBtn.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.3)';
+    });
+
+    pagamentoBtn.addEventListener('click', () => {
+      window.location.href = 'https://go.invictuspay.app.br/uiu36mqyaf';
+    });
+  }
+
+  // Fade suave nos textos e seções
+  const fadeElements = document.querySelectorAll('.fade-in');
+  fadeElements.forEach((el, index) => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 1s ease';
+    setTimeout(() => {
+      el.style.opacity = '1';
+    }, 500 + index * 300);
+  });
+});  pagamentoBtn.addEventListener('mouseleave', () => {
     pagamentoBtn.style.transform = 'scale(1)';
     pagamentoBtn.style.boxShadow = '0 0 10px rgba(255, 255, 255, 0.3)';
   });
