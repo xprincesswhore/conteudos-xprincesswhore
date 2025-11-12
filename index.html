@@ -1,40 +1,117 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Compra Segura</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Midnight Diaries — Pacote de Vídeos</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="header">
-    <div class="overlay"></div>
-    <div class="header-content">
-      <h1>Compra Segura OLX Pay</h1>
-      <p>Transações seguras com verificação automática.</p>
+
+<div class="wrap">
+  <!-- HERO -->
+  <header class="hero" role="banner">
+    <div class="avatar floating" id="headerAvatar" aria-hidden="true"></div>
+
+    <div class="hero-info">
+      <h1 class="title">
+        Midnight Diaries
+        <span class="glow">Conteúdo pessoal — R$20</span>
+      </h1>
+      <p class="subtitle">Vlogs íntimos, estéticos e sem cunho sexual — rotinas, arte, pensamentos, playlists e mini-performances. Pacote único com vídeos exclusivos.</p>
+      <div class="muted" style="margin-top:0.6rem">Entrega digital instantânea após pagamento • Formato MP4/WEBM • Sem assinatura</div>
+    </div>
+
+    <div class="price-wrap">
+      <div class="price">R$ 20 <small>Pacote único — todos os clipes</small></div>
+      <div style="height:0.5rem"></div>
+      <div class="muted" style="text-align:right;font-size:0.85rem">Entrega: link privado</div>
     </div>
   </header>
 
-  <main>
-    <section class="carousel-section">
-      <div class="carousel-container">
-        <div class="carousel" id="carousel"></div>
-      </div>
-    </section>
+  <!-- CAROUSEL + DETAILS -->
+  <section class="grid" aria-labelledby="section-title">
+    <!-- Left: carousel -->
+    <div>
+      <div class="carousel" id="carousel" aria-roledescription="carousel">
+        <div class="slides" id="slides" style="--slide-duration:1.5s;"></div>
 
-    <section class="info-section">
-      <div class="info-card">
-        <h2>7 vendas nos últimos 6 meses</h2>
-        <p>Comprador verificado e com entregas concluídas.</p>
-      </div>
+        <div class="controls" aria-hidden="true">
+          <button class="ctrl-btn" id="prev" title="Anterior" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="ctrl-btn" id="next" title="Próximo" aria-label="Próximo"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
 
-      <div class="info-card">
-        <h2>Frete com seguro incluso</h2>
-        <p>Proteção total contra extravios e fraudes.</p>
+        <div class="indicators" id="indicators" role="tablist" aria-label="Slides"></div>
       </div>
 
-      <div class="info-card destaque">
-        <h2>Compra 100% protegida</h2>
+      <div style="height:0.75rem"></div>
+
+      <!-- mini info strip -->
+      <div style="display:flex;gap:1rem;align-items:center;justify-content:space-between;font-size:0.9rem">
+        <div class="muted">Formato: Vídeo (MP4) • Duração total aprox. 10–15 min</div>
+        <div class="muted">Entrega: Imediata</div>
+      </div>
+    </div>
+
+    <!-- Right: details & purchase -->
+    <aside>
+      <div class="desc">
+        <h3 id="section-title">O que inclui</h3>
+        <p>Um pacote curado com clipes do dia a dia: vlogs, pequenas performances, playlists e cenas estéticas. Ideal para quem aprecia estética emo/gótica e autenticidade.</p>
+        <div class="features">
+          <div class="feature"><i class="fa-solid fa-play"></i><div><strong>Clipes exclusivos</strong><span class="muted">Vlogs inéditos</span></div></div>
+          <div class="feature"><i class="fa-solid fa-shield-halved"></i><div><strong>Conteúdo seguro</strong><span class="muted">Sem nudez, sem conteúdo adulto</span></div></div>
+          <div class="feature"><i class="fa-solid fa-download"></i><div><strong>Download liberado</strong><span class="muted">Arquivos para você guardar</span></div></div>
+        </div>
+      </div>
+
+      <div style="height:1rem"></div>
+
+      <div class="purchase" aria-labelledby="purchase-title">
+        <h3 id="purchase-title" style="margin:0;color:#fff">Finalize a compra</h3>
+        <div class="muted">Pagamento único — acesso vitalício ao pacote</div>
+
+        <div class="cta" style="margin-top:0.5rem">
+          <button class="btn-buy" id="buyBtn" aria-haspopup="dialog"><i class="fa-solid fa-wallet" style="margin-right:0.6rem"></i> Comprar por R$20</button>
+          <button class="alt" id="previewBtn" title="Assistir prévia"><i class="fa-solid fa-eye"></i></button>
+        </div>
+
+        <div style="font-size:0.88rem;color:var(--muted);margin-top:0.6rem">
+          <strong>Formas:</strong> cartão, PIX ou link de pagamento. Após confirmação, você receberá um link privado para download/stream.
+        </div>
+      </div>
+    </aside>
+  </section>
+</div>
+
+<!-- Modal confirm -->
+<div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal" role="document">
+    <h4>Confirmar Compra</h4>
+    <p>Pacote de vídeos - R$20. Deseja prosseguir para a página de pagamento?</p>
+    <div style="display:flex;gap:0.6rem;justify-content:flex-end">
+      <button class="alt" id="cancelModal">Cancelar</button>
+      <button class="btn-buy" id="confirmPay">Ir para Pagamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quick preview modal (plays current slide if video) -->
+<div class="modal-back" id="previewBack" aria-hidden="true">
+  <div class="modal" style="max-width:800px">
+    <h4>Prévia</h4>
+    <div id="previewArea" class="preview-area"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:0.6rem">
+      <button class="alt" id="closePreview">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+  </html>        <h2>Compra 100% protegida</h2>
         <p>Seu dinheiro só é liberado após confirmar o recebimento.</p>
       </div>
     </section>
