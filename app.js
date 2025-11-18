@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     "4.mp4",
     // Vídeos são processados se terminarem em .mp4
     // Exemplo: "video_demo.mp4"
-    "dreamina-2025-10-29-8921-I want you to remove the background and ....jpg" 
   ];
 
   // --- COMPONENTES DOM ---
