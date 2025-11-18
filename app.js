@@ -7,9 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Lista manual de arquivos (imagens e vídeos) na pasta /assets
   // Mantenha o formato 'nome_arquivo.extensao'
   const mediaFiles = [
-    "20251014_052443.jpg",
-    "20251014_052819.jpg",
-    "20251014_052822.jpg",
     "1.mp4",
     "2.mp4",
     "3.mp4",
