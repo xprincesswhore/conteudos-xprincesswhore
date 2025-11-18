@@ -16,6 +16,7 @@
   </header>
 
   <main class="container">
+    <h2 class="section-title">Conteúdo do Pacote</h2>
     <section class="grid-container">
       <div class="grid">
         <div class="carousel-section">
@@ -74,10 +75,10 @@
 
   <div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document">
+      <button class="close-btn" id="closeModal" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
       <h4>Confirmar Compra</h4>
       <p>Pacote de conteúdo exclusivo - R$20,00. Deseja prosseguir para a página de pagamento?</p>
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button class="alt" id="cancelModal">Cancelar</button>
+      <div class="modal-actions-one-btn">
         <button class="btn-buy" id="confirmPay">Ir para Pagamento</button>
       </div>
     </div>
@@ -85,11 +86,11 @@
 
   <div class="modal-back" id="previewBack" aria-hidden="true">
     <div class="modal" style="max-width:800px">
+      <button class="close-btn" id="closePreview" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
       <h4>Prévia Rápida</h4>
       <div id="previewArea" class="preview-area"></div>
       <div style="display:flex;justify-content:flex-end;margin-top:12px">
-        <button class="alt" id="closePreview">Fechar</button>
-      </div>
+        </div>
     </div>
   </div>
 
