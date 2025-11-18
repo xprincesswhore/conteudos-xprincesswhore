@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- CONFIGURAÇÕES GLOBAIS ---
-  const PAYMENT_LINK = "https://go.invictuspay.app.br/uiu36mqyaf";
+  const PAYMENT_LINK = "https://go.perfectpay.com.br/PPU38CQ3I44";
   const SLIDE_DURATION = 4000; // 4 segundos por slide
   const TRANSITION_MS = 600;
 
@@ -24,12 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const buyBtn = document.getElementById('buyBtn');
   const modalBack = document.getElementById('modalBack');
-  // Ajuste: Botão 'Cancelar' removido. Usando o novo 'closeModal'
   const closeModal = document.getElementById('closeModal'); 
   const confirmPay = document.getElementById('confirmPay');
   const previewBtn = document.getElementById('previewBtn');
   const previewBack = document.getElementById('previewBack');
-  const closePreview = document.getElementById('closePreview'); // Renomeado para consistência
+  const closePreview = document.getElementById('closePreview');
   const previewArea = document.getElementById('previewArea');
 
   // --- ESTADO DO CARROSSEL ---
@@ -38,6 +37,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let idx = 0;
   let timer = null;
   let playing = true;
+
+  // --- FUNÇÕES DE UTILIDADE ---
+
+  /**
+   * [NOVA FUNÇÃO] Seleciona aleatoriamente um arquivo da lista de mídias.
+   * @returns {{file: string, isVideo: boolean, src: string}} Objeto com detalhes da mídia.
+   */
+  function getRandomMedia() {
+    const randomIndex = Math.floor(Math.random() * mediaFiles.length);
+    const file = mediaFiles[randomIndex];
+    const isVideo = file.endsWith('.mp4');
+    const src = file.startsWith('http') ? file : `assets/${file}`;
+    return { file, isVideo, src };
+  }
 
   // --- FUNÇÕES DO CARROSSEL ---
 
@@ -59,7 +72,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (isVideo) {
         // Usa a tag <video> com autoplay/muted para prévia
-        // Preload para carregar os metadados mais rápido, ajudando o autoplay
         slide.innerHTML = `<video muted playsinline preload="metadata" loop>
           <source src="${src}" type="video/mp4">
           Seu navegador não suporta vídeo.
@@ -116,19 +128,16 @@ document.addEventListener("DOMContentLoaded", () => {
   function showSlide(i) {
     const n = slides.length;
     if (n === 0) return;
-    // Normaliza o índice para lidar com loop (próximo após o último/anterior ao primeiro)
     idx = ((i % n) + n) % n;
 
-    // Transforma o container para exibir o slide
     slidesEl.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(.2,.9,.2,1)`;
     slidesEl.style.transform = `translateX(-${idx * 100}%)`;
 
-    // Atualiza classes ativas e controla a reprodução de vídeo
     slides.forEach((s, si) => {
       s.classList.toggle('active', si === idx);
       const v = s.querySelector('video');
       if (v) {
-        // PAUSA e RESETA todos os vídeos inativos (IMPORTANTE para liberar recursos)
+        // PAUSA e RESETA todos os vídeos inativos
         try { v.pause(); v.currentTime = 0; } catch (e) { /* ignore */ }
       }
     });
@@ -138,17 +147,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentVideo = current.querySelector('video');
     
     if (currentVideo) {
-      // Ajuste: Para vídeos no carrossel, tentar reproduzir o vídeo atual (mudo)
-      // Usar 'loadedmetadata' para garantir que o vídeo tenha dados suficientes para play()
       currentVideo.muted = true;
       currentVideo.onloadedmetadata = () => {
           currentVideo.play().catch(() => { /* autoplay bloqueado, ignora */ });
       };
-      // Força o carregamento, caso já esteja na DOM e o evento não tenha sido disparado
       currentVideo.load(); 
     }
     
-    // Atualiza indicadores
     dots.forEach(d => d.classList.remove('active'));
     if (dots[idx]) dots[idx].classList.add('active');
   }
@@ -167,7 +172,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function pause() { 
     playing = false; 
     if (timer) clearInterval(timer); 
-    // Pausa o vídeo ativo ao pausar o carrossel
     const currentVideo = document.querySelector('.slide.active video');
     if (currentVideo) {
         try { currentVideo.pause(); } catch (e) { /* ignore */ }
@@ -177,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function resume() { 
     if (!playing) playing = true;
     resetTimer(); 
-    // Tenta retomar o vídeo ativo ao retomar o carrossel
     const currentVideo = document.querySelector('.slide.active video');
     if (currentVideo) {
         try { currentVideo.play().catch(() => { /* autoplay bloqueado, ignora */ }); } catch (e) { /* ignore */ }
@@ -192,7 +195,6 @@ document.addEventListener("DOMContentLoaded", () => {
     modalBack.setAttribute('aria-hidden', 'false');
   });
 
-  // Evento para o novo botão 'X' no modal de compra
   if (closeModal) closeModal.addEventListener('click', () => {
     modalBack.style.display = 'none';
     modalBack.setAttribute('aria-hidden', 'true');
@@ -211,52 +213,56 @@ document.addEventListener("DOMContentLoaded", () => {
     } 
   });
 
-  // Preview Rápida (Modal)
+  // Preview Rápida (Modal) - Lógica Alterada para RANDOMIZAÇÃO
   if (previewBtn) previewBtn.addEventListener('click', () => {
-    const active = document.querySelector('.slide.active');
-    if (!active) return;
+    
+    // 1. Pega uma mídia aleatória, NÃO a ativa do carrossel.
+    const media = getRandomMedia();
     
     // Limpa a área de preview
     previewArea.innerHTML = '';
 
-    if (active.dataset.type === 'video') {
-      const src = active.querySelector('video source')?.src;
-      if (src) {
-        // Cria um elemento de vídeo para o modal (com controles e som)
-        const vid = document.createElement('video');
-        vid.controls = true;
-        vid.autoplay = true;
-        vid.muted = false; // Permite áudio no modal
-        vid.style.width = '100%';
-        vid.style.height = '100%';
-        vid.style.objectFit = 'contain';
-        const s = document.createElement('source');
-        s.src = src;
-        s.type = 'video/mp4';
-        vid.appendChild(s);
-        previewArea.appendChild(vid);
-        // Tentar reproduzir e lidar com o erro de autoplay bloqueado
-        try { vid.play(); } catch (e) { /* ignore */ }
-      }
+    if (media.isVideo) {
+      // Cria um elemento de vídeo para o modal (com controles e som)
+      const vid = document.createElement('video');
+      vid.controls = true;
+      vid.autoplay = true;
+      vid.muted = false; // Permite áudio no modal
+      vid.style.width = '100%';
+      vid.style.height = '100%';
+      vid.style.objectFit = 'contain';
+      
+      const s = document.createElement('source');
+      s.src = media.src; // Usa o src aleatório
+      s.type = 'video/mp4';
+      vid.appendChild(s);
+      
+      previewArea.appendChild(vid);
+      
+      // Tenta reproduzir e lidar com o erro de autoplay bloqueado
+      vid.play().catch(() => { /* ignore */ });
+
     } else {
-      // Cria um clone da imagem
-      const img = active.querySelector('img');
-      if (img) {
-        const clone = document.createElement('img');
-        clone.src = img.src;
-        clone.style.width = '100%';
-        clone.style.height = '100%';
-        clone.style.objectFit = 'contain';
-        previewArea.appendChild(clone);
-      }
+      // Cria um elemento de imagem
+      const img = document.createElement('img');
+      img.src = media.src; // Usa o src aleatório
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'contain';
+      previewArea.appendChild(img);
     }
 
     previewBack.style.display = 'flex';
     previewBack.setAttribute('aria-hidden', 'false');
   });
 
-  // Usa o novo 'closePreview' (o 'X' no modal de prévia)
   if (closePreview) closePreview.addEventListener('click', () => { 
+    // Garante que o vídeo pare ao fechar o modal
+    const videoInPreview = previewArea.querySelector('video');
+    if (videoInPreview) {
+      try { videoInPreview.pause(); videoInPreview.currentTime = 0; } catch (e) { /* ignore */ }
+    }
+
     previewBack.style.display = 'none'; 
     previewBack.setAttribute('aria-hidden', 'true'); 
     previewArea.innerHTML = ''; 
@@ -264,6 +270,12 @@ document.addEventListener("DOMContentLoaded", () => {
   
   if (previewBack) previewBack.addEventListener('click', (e) => { 
     if (e.target === previewBack) { 
+       // Garante que o vídeo pare ao clicar fora
+      const videoInPreview = previewArea.querySelector('video');
+      if (videoInPreview) {
+        try { videoInPreview.pause(); videoInPreview.currentTime = 0; } catch (e) { /* ignore */ }
+      }
+
       previewBack.style.display = 'none'; 
       previewBack.setAttribute('aria-hidden', 'true'); 
       previewArea.innerHTML = ''; 
