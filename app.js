@@ -27,11 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const buyBtn = document.getElementById('buyBtn');
   const modalBack = document.getElementById('modalBack');
-  const cancelModal = document.getElementById('cancelModal');
+  // Ajuste: Botão 'Cancelar' removido. Usando o novo 'closeModal'
+  const closeModal = document.getElementById('closeModal'); 
   const confirmPay = document.getElementById('confirmPay');
   const previewBtn = document.getElementById('previewBtn');
   const previewBack = document.getElementById('previewBack');
-  const closePreview = document.getElementById('closePreview');
+  const closePreview = document.getElementById('closePreview'); // Renomeado para consistência
   const previewArea = document.getElementById('previewArea');
 
   // --- ESTADO DO CARROSSEL ---
@@ -61,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (isVideo) {
         // Usa a tag <video> com autoplay/muted para prévia
+        // Preload para carregar os metadados mais rápido, ajudando o autoplay
         slide.innerHTML = `<video muted playsinline preload="metadata" loop>
           <source src="${src}" type="video/mp4">
           Seu navegador não suporta vídeo.
@@ -129,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
       s.classList.toggle('active', si === idx);
       const v = s.querySelector('video');
       if (v) {
+        // PAUSA e RESETA todos os vídeos inativos (IMPORTANTE para liberar recursos)
         try { v.pause(); v.currentTime = 0; } catch (e) { /* ignore */ }
       }
     });
@@ -136,10 +139,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const current = slides[idx];
     if (!current) return;
     const currentVideo = current.querySelector('video');
+    
     if (currentVideo) {
-      // Tenta reproduzir o vídeo atual (mudo para evitar bloqueio)
+      // Ajuste: Para vídeos no carrossel, tentar reproduzir o vídeo atual (mudo)
+      // Usar 'loadedmetadata' para garantir que o vídeo tenha dados suficientes para play()
       currentVideo.muted = true;
-      currentVideo.play().catch(() => { /* autoplay bloqueado */ });
+      currentVideo.onloadedmetadata = () => {
+          currentVideo.play().catch(() => { /* autoplay bloqueado, ignora */ });
+      };
+      // Força o carregamento, caso já esteja na DOM e o evento não tenha sido disparado
+      currentVideo.load(); 
     }
     
     // Atualiza indicadores
@@ -161,11 +170,21 @@ document.addEventListener("DOMContentLoaded", () => {
   function pause() { 
     playing = false; 
     if (timer) clearInterval(timer); 
+    // Pausa o vídeo ativo ao pausar o carrossel
+    const currentVideo = document.querySelector('.slide.active video');
+    if (currentVideo) {
+        try { currentVideo.pause(); } catch (e) { /* ignore */ }
+    }
   }
   
   function resume() { 
     if (!playing) playing = true;
     resetTimer(); 
+    // Tenta retomar o vídeo ativo ao retomar o carrossel
+    const currentVideo = document.querySelector('.slide.active video');
+    if (currentVideo) {
+        try { currentVideo.play().catch(() => { /* autoplay bloqueado, ignora */ }); } catch (e) { /* ignore */ }
+    }
   }
 
   // --- LÓGICA DE BOTÕES E MODAIS ---
@@ -176,7 +195,8 @@ document.addEventListener("DOMContentLoaded", () => {
     modalBack.setAttribute('aria-hidden', 'false');
   });
 
-  if (cancelModal) cancelModal.addEventListener('click', () => {
+  // Evento para o novo botão 'X' no modal de compra
+  if (closeModal) closeModal.addEventListener('click', () => {
     modalBack.style.display = 'none';
     modalBack.setAttribute('aria-hidden', 'true');
   });
@@ -218,6 +238,7 @@ document.addEventListener("DOMContentLoaded", () => {
         s.type = 'video/mp4';
         vid.appendChild(s);
         previewArea.appendChild(vid);
+        // Tentar reproduzir e lidar com o erro de autoplay bloqueado
         try { vid.play(); } catch (e) { /* ignore */ }
       }
     } else {
@@ -237,6 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
     previewBack.setAttribute('aria-hidden', 'false');
   });
 
+  // Usa o novo 'closePreview' (o 'X' no modal de prévia)
   if (closePreview) closePreview.addEventListener('click', () => { 
     previewBack.style.display = 'none'; 
     previewBack.setAttribute('aria-hidden', 'true'); 
