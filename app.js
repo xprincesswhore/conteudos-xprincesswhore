@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
     "20251014_052443.jpg",
     "20251014_052819.jpg",
     "20251014_052822.jpg",
+    "1.mp4",
+    "2.mp4",
+    "3.mp4",
+    "4.mp4",
     // Vídeos são processados se terminarem em .mp4
     // Exemplo: "video_demo.mp4"
     "dreamina-2025-10-29-8921-I want you to remove the background and ....jpg" 
