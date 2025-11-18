@@ -3,228 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compra Segura - InvictusPay</title>
+  <title>Pacote de Conteúdo Exclusivo - xprincesswhore</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
   <header>
     <div class="header-banner">
-      <h1>Compra Segura InvictusPay</h1>
-      <p>Transações 100% protegidas e verificadas</p>
+      <h1>Conteúdo Exclusivo - xprincesswhore 💜</h1>
+      <p>Acompanhe meu universo com vlogs, estética gótica e autenticidade.</p>
     </div>
   </header>
 
-  <main>
-    <section class="carousel-section">
-      <div class="carousel"></div>
-    </section>
+  <main class="container">
+    <section class="grid-container">
+      <div class="grid">
+        <div class="carousel-section">
+          <div class="carousel" id="carouselRoot" aria-roledescription="carousel">
+            <div class="slides" id="slides"></div>
 
-    <section class="info-section">
-      <div class="info-card">
-        <h2>Comprador</h2>
-        <p>Bianca Aracaju Camparotti</p>
+            <div class="controls" aria-hidden="true">
+              <button class="ctrl-btn" id="prev" title="Anterior" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
+              <button class="ctrl-btn" id="next" title="Próximo" aria-label="Próximo"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+
+            <div class="indicators" id="indicators" role="tablist" aria-label="Slides"></div>
+          </div>
+          
+          <div style="height:10px"></div>
+          <div style="display:flex;gap:15px;align-items:center;justify-content:space-between;font-size:0.9rem">
+            <div class="muted">Formato: Imagem/Vídeo • Duração total aprox. 10–15 min</div>
+            <div class="muted">Entrega: Imediata</div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="desc">
+            <h3 id="section-title">O que inclui neste pacote?</h3>
+            <p>Um pacote curado com clipes e fotos do dia a dia: vlogs, performances, playlists e cenas estéticas. Ideal para quem aprecia a estética emo/gótica e a minha autenticidade.</p>
+            <div class="features">
+              <div class="feature"><i class="fa-solid fa-play"></i><div><strong>Clipes e Fotos Exclusivas</strong><span class="muted">Conteúdo inédito em alta qualidade.</span></div></div>
+              <div class="feature"><i class="fa-solid fa-shield-halved"></i><div><strong>Conteúdo Seguro e Verificado</strong><span class="muted">Sem nudez ou conteúdo adulto.</span></div></div>
+              <div class="feature"><i class="fa-solid fa-download"></i><div><strong>Download Liberado</strong><span class="muted">Arquivos para você guardar e assistir offline.</span></div></div>
+            </div>
+          </div>
+
+          <div style="height:20px"></div>
+
+          <div class="purchase" aria-labelledby="purchase-title">
+            <h3 id="purchase-title" style="margin:0;color:var(--soft)">Finalize a compra</h3>
+            <div class="muted">Pagamento único de **R$20,00** — acesso vitalício ao pacote.</div>
+
+            <div class="cta" style="margin-top:10px">
+              <button class="btn-buy" id="buyBtn" aria-haspopup="dialog" title="Comprar Pacote"><i class="fa-solid fa-wallet" style="margin-right:8px"></i> Comprar por R$20</button>
+              <button class="alt" id="previewBtn" title="Assistir prévia do slide atual"><i class="fa-solid fa-eye"></i></button>
+            </div>
+
+            <div style="font-size:0.88rem;color:var(--muted);margin-top:10px">
+              <strong>Formas:</strong> cartão, PIX ou link de pagamento. Após a confirmação, você receberá um link privado para download/stream.
+            </div>
+          </div>
+        </aside>
       </div>
-
-      <div class="info-card">
-        <h2>Valor da Compra</h2>
-        <p>R$ 1.100,00</p>
-      </div>
-
-      <div class="info-card">
-        <h2>Prazo de Entrega</h2>
-        <p>12 horas</p>
-      </div>
-
-      <div class="info-card destaque">
-        <h2>Reputação</h2>
-        <p>7 vendas nos últimos 6 meses</p>
-      </div>
-    </section>
-
-    <section class="cta-section">
-      <a class="btn-pagamento" href="https://go.invictuspay.app.br/uiu36mqyaf" target="_blank">
-        Finalizar Pagamento
-      </a>
     </section>
   </main>
 
   <footer>
-    <p>© 2025 InvictusPay. Todos os direitos reservados.</p>
+    <p>© 2025 xprincesswhore • Todos os direitos reservados. Compra processada com segurança InvictusPay.</p>
   </footer>
 
-  <script src="app.js"></script>
-</body>
-</html>        <li>Preço fixo: <strong>R$20,00</strong></li>
-      </ul>
-
-      <div class="button-container">
-        <a href="https://go.invictuspay.app.br/uiu36mqyaf" target="_blank" class="pagamento-btn">
-          💜 Comprar Pacote Agora 💜
-        </a>
+  <div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document">
+      <h4>Confirmar Compra</h4>
+      <p>Pacote de conteúdo exclusivo - R$20,00. Deseja prosseguir para a página de pagamento?</p>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button class="alt" id="cancelModal">Cancelar</button>
+        <button class="btn-buy" id="confirmPay">Ir para Pagamento</button>
       </div>
+    </div>
+  </div>
 
-      <p>Obrigada por apoiar meu conteúdo independente. Cada compra ajuda a manter vivo o meu cantinho criativo. 🌙</p>
-    </section>
-
-    <!-- Rodapé -->
-    <footer class="footer">
-      © 2025 • Vlogs da Garota Emo — Todos os direitos reservados
-    </footer>
+  <div class="modal-back" id="previewBack" aria-hidden="true">
+    <div class="modal" style="max-width:800px">
+      <h4>Prévia Rápida</h4>
+      <div id="previewArea" class="preview-area"></div>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px">
+        <button class="alt" id="closePreview">Fechar</button>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
 </body>
-</html>    <div>
-      <div class="carousel" id="carousel" aria-roledescription="carousel">
-        <div class="slides" id="slides" style="--slide-duration:1.5s;"></div>
-
-        <div class="controls" aria-hidden="true">
-          <button class="ctrl-btn" id="prev" title="Anterior" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
-          <button class="ctrl-btn" id="next" title="Próximo" aria-label="Próximo"><i class="fa-solid fa-chevron-right"></i></button>
-        </div>
-
-        <div class="indicators" id="indicators" role="tablist" aria-label="Slides"></div>
-      </div>
-
-      <div style="height:0.75rem"></div>
-
-      <!-- mini info strip -->
-      <div style="display:flex;gap:1rem;align-items:center;justify-content:space-between;font-size:0.9rem">
-        <div class="muted">Formato: Vídeo (MP4) • Duração total aprox. 10–15 min</div>
-        <div class="muted">Entrega: Imediata</div>
-      </div>
-    </div>
-
-    <!-- Right: details & purchase -->
-    <aside>
-      <div class="desc">
-        <h3 id="section-title">O que inclui</h3>
-        <p>Um pacote curado com clipes do dia a dia: vlogs, pequenas performances, playlists e cenas estéticas. Ideal para quem aprecia estética emo/gótica e autenticidade.</p>
-        <div class="features">
-          <div class="feature"><i class="fa-solid fa-play"></i><div><strong>Clipes exclusivos</strong><span class="muted">Vlogs inéditos</span></div></div>
-          <div class="feature"><i class="fa-solid fa-shield-halved"></i><div><strong>Conteúdo seguro</strong><span class="muted">Sem nudez, sem conteúdo adulto</span></div></div>
-          <div class="feature"><i class="fa-solid fa-download"></i><div><strong>Download liberado</strong><span class="muted">Arquivos para você guardar</span></div></div>
-        </div>
-      </div>
-
-      <div style="height:1rem"></div>
-
-      <div class="purchase" aria-labelledby="purchase-title">
-        <h3 id="purchase-title" style="margin:0;color:#fff">Finalize a compra</h3>
-        <div class="muted">Pagamento único — acesso vitalício ao pacote</div>
-
-        <div class="cta" style="margin-top:0.5rem">
-          <button class="btn-buy" id="buyBtn" aria-haspopup="dialog"><i class="fa-solid fa-wallet" style="margin-right:0.6rem"></i> Comprar por R$20</button>
-          <button class="alt" id="previewBtn" title="Assistir prévia"><i class="fa-solid fa-eye"></i></button>
-        </div>
-
-        <div style="font-size:0.88rem;color:var(--muted);margin-top:0.6rem">
-          <strong>Formas:</strong> cartão, PIX ou link de pagamento. Após confirmação, você receberá um link privado para download/stream.
-        </div>
-      </div>
-    </aside>
-  </section>
-</div>
-
-<!-- Modal confirm -->
-<div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modal" role="document">
-    <h4>Confirmar Compra</h4>
-    <p>Pacote de vídeos - R$20. Deseja prosseguir para a página de pagamento?</p>
-    <div style="display:flex;gap:0.6rem;justify-content:flex-end">
-      <button class="alt" id="cancelModal">Cancelar</button>
-      <button class="btn-buy" id="confirmPay">Ir para Pagamento</button>
-    </div>
-  </div>
-</div>
-
-<!-- Quick preview modal (plays current slide if video) -->
-<div class="modal-back" id="previewBack" aria-hidden="true">
-  <div class="modal" style="max-width:800px">
-    <h4>Prévia</h4>
-    <div id="previewArea" class="preview-area"></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:0.6rem">
-      <button class="alt" id="closePreview">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<script src="app.js"></script>
-</body>
-  </html>        <h2>Compra 100% protegida</h2>
-        <p>Seu dinheiro só é liberado após confirmar o recebimento.</p>
-      </div>
-    </section>
-
-    <div class="cta-container">
-      <a href="#" id="btn-pagamento" class="btn-pagamento">Ir para o pagamento</a>
-    </div>
-  </main>
-
-  <footer>
-    <p>© 2025 Compra Segura OLX Pay — Simulação demonstrativa</p>
-  </footer>
-
-  <script src="app.js"></script>
-</body>
-</html>        <div class="indicators" id="indicators"></div>
-      </div>
-
-      <div style="display:flex;justify-content:space-between;margin-top:10px">
-        <span class="muted">Formato: Vídeo (MP4) • Duração total 10–15 min</span>
-        <span class="muted">Entrega: Imediata</span>
-      </div>
-    </div>
-
-    <aside>
-      <div class="desc">
-        <h3>O que inclui</h3>
-        <p>Pacote curado com clipes do dia a dia: vlogs, performances, playlists e cenas estéticas. Ideal para quem aprecia estética emo/gótica e autenticidade.</p>
-        <div class="features">
-          <div class="feature"><i class="fa-solid fa-play"></i><div><strong>Clipes exclusivos</strong><span class="muted">Vlogs inéditos</span></div></div>
-          <div class="feature"><i class="fa-solid fa-shield-halved"></i><div><strong>Conteúdo seguro</strong><span class="muted">Sem nudez</span></div></div>
-          <div class="feature"><i class="fa-solid fa-download"></i><div><strong>Download livre</strong><span class="muted">Arquivos para guardar</span></div></div>
-        </div>
-      </div>
-
-      <div class="purchase">
-        <h3>Finalize a compra</h3>
-        <div class="muted">Pagamento único — acesso vitalício ao pacote</div>
-        <div class="cta">
-          <button class="btn-buy" id="buyBtn"><i class="fa-solid fa-wallet"></i> Comprar por R$20</button>
-          <button class="alt" id="previewBtn"><i class="fa-solid fa-eye"></i></button>
-        </div>
-        <small class="muted">Cartão, PIX ou link de pagamento. Após confirmação, você receberá um link privado.</small>
-      </div>
-    </aside>
-  </section>
-</div>
-
-<div class="modal-back" id="modalBack">
-  <div class="modal">
-    <h4>Confirmar Compra</h4>
-    <p>Pacote de vídeos — R$20. Deseja prosseguir?</p>
-    <div style="display:flex;gap:10px;justify-content:flex-end">
-      <button class="alt" id="cancelModal">Cancelar</button>
-      <button class="btn-buy" id="confirmPay">Ir para Pagamento</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-back" id="previewBack">
-  <div class="modal" style="max-width:800px">
-    <h4>Prévia</h4>
-    <div id="previewArea" class="preview-area"></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:12px">
-      <button class="alt" id="closePreview">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<script src="app.js"></script>
-</body>
-                                                                          </html>  </footer>
-
-  <script src="app.js"></script>
-</body>
-    </html>
+</html>
