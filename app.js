@@ -1,289 +1,216 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // --- CONFIGURAÇÕES GLOBAIS ---
-  const PAYMENT_LINK = "https://go.perfectpay.com.br/PPU38CQ3I44";
-  const SLIDE_DURATION = 4000; // 4 segundos por slide
-  const TRANSITION_MS = 600;
+  // --- CONFIGURAÇÃO ---
+  const CONFIG = {
+    paymentLink: "https://go.invictuspay.app.br/uiu36mqyaf",
+    slideDuration: 5000,
+    assetsPath: 'assets/',
+    // Adicione seus arquivos aqui
+    media: [
+      "1.mp4",
+      "2.mp4", 
+      "3.mp4",
+      "4.mp4"
+    ]
+  };
 
-  // Lista manual de arquivos (imagens e vídeos) na pasta /assets
-  // Mantenha o formato 'nome_arquivo.extensao'
-  const mediaFiles = [
-    "1.mp4",
-    "2.mp4",
-    "3.mp4",
-    "4.mp4",
-    // Vídeos são processados se terminarem em .mp4
-    // Exemplo: "video_demo.mp4"
-  ];
+  // --- ELEMENTOS ---
+  const els = {
+    carousel: document.getElementById('carouselRoot'),
+    slidesContainer: document.getElementById('slides'),
+    indicators: document.getElementById('indicators'),
+    btnNext: document.getElementById('next'),
+    btnPrev: document.getElementById('prev'),
+    btnPreview: document.getElementById('previewBtn'),
+    
+    // Lightbox
+    lightbox: document.getElementById('previewBack'),
+    lightboxClose: document.getElementById('closePreview'),
+    lightboxArea: document.getElementById('previewArea'),
+    
+    // Compra
+    btnBuyDesktop: document.getElementById('buyBtnDesktop'),
+    btnBuyMobile: document.getElementById('buyBtnMobile')
+  };
 
-  // --- COMPONENTES DOM ---
-  const carouselRoot = document.getElementById('carouselRoot');
-  const slidesEl = document.getElementById('slides');
-  const indicatorsEl = document.getElementById('indicators');
-  const nextBtn = document.getElementById('next');
-  const prevBtn = document.getElementById('prev');
+  // --- ESTADO ---
+  let state = {
+    currentIndex: 0,
+    timer: null,
+    isPlaying: true,
+    slides: [] // Array de objetos { element, type, src }
+  };
 
-  const buyBtn = document.getElementById('buyBtn');
-  const modalBack = document.getElementById('modalBack');
-  const closeModal = document.getElementById('closeModal'); 
-  const confirmPay = document.getElementById('confirmPay');
-  const previewBtn = document.getElementById('previewBtn');
-  const previewBack = document.getElementById('previewBack');
-  const closePreview = document.getElementById('closePreview');
-  const previewArea = document.getElementById('previewArea');
-
-  // --- ESTADO DO CARROSSEL ---
-  let slides = [];
-  let dots = [];
-  let idx = 0;
-  let timer = null;
-  let playing = true;
-
-  // --- FUNÇÕES DE UTILIDADE ---
-
-  /**
-   * [NOVA FUNÇÃO] Seleciona aleatoriamente um arquivo da lista de mídias.
-   * @returns {{file: string, isVideo: boolean, src: string}} Objeto com detalhes da mídia.
-   */
-  function getRandomMedia() {
-    const randomIndex = Math.floor(Math.random() * mediaFiles.length);
-    const file = mediaFiles[randomIndex];
-    const isVideo = file.endsWith('.mp4');
-    const src = file.startsWith('http') ? file : `assets/${file}`;
-    return { file, isVideo, src };
+  // --- CORE: SETUP CAROUSEL ---
+  function init() {
+    buildSlides();
+    startTimer();
+    bindEvents();
   }
 
-  // --- FUNÇÕES DO CARROSSEL ---
+  function buildSlides() {
+    els.slidesContainer.innerHTML = '';
+    els.indicators.innerHTML = '';
 
-  /**
-   * Constrói a estrutura do carrossel no DOM
-   */
-  function buildCarousel() {
-    slidesEl.innerHTML = '';
-    indicatorsEl.innerHTML = '';
+    CONFIG.media.forEach((file, index) => {
+      const isVideo = file.toLowerCase().endsWith('.mp4');
+      const src = file.startsWith('http') ? file : `${CONFIG.assetsPath}${file}`;
 
-    mediaFiles.forEach((file, i) => {
-      const isVideo = file.endsWith('.mp4');
-      const slide = document.createElement('div');
-      slide.className = 'slide';
-      slide.dataset.index = i;
-      slide.dataset.type = isVideo ? 'video' : 'image';
-
-      const src = file.startsWith('http') ? file : `assets/${file}`;
-
+      // 1. Criar Slide
+      const slideEl = document.createElement('div');
+      slideEl.className = 'slide';
+      
+      let content = '';
       if (isVideo) {
-        // Usa a tag <video> com autoplay/muted para prévia
-        slide.innerHTML = `<video muted playsinline preload="metadata" loop>
-          <source src="${src}" type="video/mp4">
-          Seu navegador não suporta vídeo.
-        </video>
-        <div class="caption">Vídeo ${i + 1}</div>`;
+        // Vídeo no carrossel: Muted, Loop, Playsinline (importante p/ iOS)
+        content = `<video muted playsinline loop preload="metadata" class="carousel-media">
+                     <source src="${src}" type="video/mp4">
+                   </video>`;
       } else {
-        // Usa a tag <img>
-        slide.innerHTML = `<img src="${src}" alt="Slide ${i + 1}">
-        <div class="caption">Imagem ${i + 1}</div>`;
+        content = `<img src="${src}" class="carousel-media" alt="Slide ${index}">`;
       }
+      slideEl.innerHTML = content;
+      els.slidesContainer.appendChild(slideEl);
 
-      slidesEl.appendChild(slide);
+      // 2. Criar Dot Indicador
+      const dot = document.createElement('div');
+      dot.className = `dot ${index === 0 ? 'active' : ''}`;
+      dot.addEventListener('click', () => goToSlide(index));
+      els.indicators.appendChild(dot);
 
-      // Constrói o indicador (dot)
-      const dot = document.createElement('span');
-      dot.className = 'dot' + (i === 0 ? ' active' : '');
-      dot.dataset.index = i;
-      indicatorsEl.appendChild(dot);
+      // 3. Salvar referência no Estado
+      state.slides.push({
+        element: slideEl,
+        type: isVideo ? 'video' : 'image',
+        src: src,
+        videoEl: isVideo ? slideEl.querySelector('video') : null
+      });
+    });
+  }
+
+  // --- NAVEGAÇÃO ---
+  function goToSlide(index) {
+    const total = state.slides.length;
+    // Lógica circular
+    state.currentIndex = ((index % total) + total) % total;
+
+    // Atualiza container (slide)
+    els.slidesContainer.style.transform = `translateX(-${state.currentIndex * 100}%)`;
+
+    // Atualiza Dots
+    Array.from(els.indicators.children).forEach((dot, i) => {
+      dot.classList.toggle('active', i === state.currentIndex);
     });
 
-    // Atualiza as NodeLists
-    slides = Array.from(document.querySelectorAll('#slides .slide'));
-    dots = Array.from(document.querySelectorAll('#indicators .dot'));
-
-    // Define a variável CSS para o efeito Ken-Burns
-    slidesEl.style.setProperty('--slide-duration', (SLIDE_DURATION / 1000).toFixed(2) + 's');
-  }
-
-  /**
-   * Inicializa o comportamento dinâmico do carrossel (timers, eventos)
-   */
-  function initCarousel() {
-    if (slides.length === 0) return;
-
-    if (timer) clearInterval(timer);
-    idx = 0;
-    showSlide(idx);
-    timer = setInterval(() => { goTo(idx + 1); }, SLIDE_DURATION);
-
-    // Controles de Navegação
-    nextBtn.onclick = () => { goTo(idx + 1); resetTimer(); };
-    prevBtn.onclick = () => { goTo(idx - 1); resetTimer(); };
-    dots.forEach(d => d.onclick = () => { goTo(+d.dataset.index); resetTimer(); });
-
-    // Pausar/Retomar ao passar o mouse
-    carouselRoot.addEventListener('mouseenter', () => { pause(); });
-    carouselRoot.addEventListener('mouseleave', () => { resume(); });
-  }
-
-  /**
-   * Exibe um slide específico e controla a mídia.
-   * @param {number} i - Índice do slide.
-   */
-  function showSlide(i) {
-    const n = slides.length;
-    if (n === 0) return;
-    idx = ((i % n) + n) % n;
-
-    slidesEl.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(.2,.9,.2,1)`;
-    slidesEl.style.transform = `translateX(-${idx * 100}%)`;
-
-    slides.forEach((s, si) => {
-      s.classList.toggle('active', si === idx);
-      const v = s.querySelector('video');
-      if (v) {
-        // PAUSA e RESETA todos os vídeos inativos
-        try { v.pause(); v.currentTime = 0; } catch (e) { /* ignore */ }
+    // Gestão de Vídeos (Play no ativo, Pause nos outros para economizar recurso)
+    state.slides.forEach((s, i) => {
+      if (s.videoEl) {
+        if (i === state.currentIndex) {
+          s.videoEl.currentTime = 0;
+          s.videoEl.play().catch(() => {}); // Autoplay pode falhar, sem problemas
+        } else {
+          s.videoEl.pause();
+        }
       }
     });
 
-    const current = slides[idx];
-    if (!current) return;
-    const currentVideo = current.querySelector('video');
-    
-    if (currentVideo) {
-      currentVideo.muted = true;
-      currentVideo.onloadedmetadata = () => {
-          currentVideo.play().catch(() => { /* autoplay bloqueado, ignora */ });
-      };
-      currentVideo.load(); 
-    }
-    
-    dots.forEach(d => d.classList.remove('active'));
-    if (dots[idx]) dots[idx].classList.add('active');
+    resetTimer();
   }
 
-  function goTo(i) {
-    showSlide(i);
+  function next() { goToSlide(state.currentIndex + 1); }
+  function prev() { goToSlide(state.currentIndex - 1); }
+
+  // --- TIMER AUTOMÁTICO ---
+  function startTimer() {
+    if (state.timer) clearInterval(state.timer);
+    state.timer = setInterval(next, CONFIG.slideDuration);
   }
 
   function resetTimer() {
-    if (timer) clearInterval(timer);
-    if(playing) {
-      timer = setInterval(() => { goTo(idx + 1); }, SLIDE_DURATION);
-    }
+    clearInterval(state.timer);
+    if (state.isPlaying) startTimer();
   }
 
-  function pause() { 
-    playing = false; 
-    if (timer) clearInterval(timer); 
-    const currentVideo = document.querySelector('.slide.active video');
-    if (currentVideo) {
-        try { currentVideo.pause(); } catch (e) { /* ignore */ }
-    }
-  }
-  
-  function resume() { 
-    if (!playing) playing = true;
-    resetTimer(); 
-    const currentVideo = document.querySelector('.slide.active video');
-    if (currentVideo) {
-        try { currentVideo.play().catch(() => { /* autoplay bloqueado, ignora */ }); } catch (e) { /* ignore */ }
-    }
-  }
+  // --- PREVIEW / LIGHTBOX ---
+  function openPreview() {
+    // Pausa o carrossel
+    state.isPlaying = false;
+    clearInterval(state.timer);
 
-  // --- LÓGICA DE BOTÕES E MODAIS ---
-  
-  // Confirmação de compra (Modal)
-  if (buyBtn) buyBtn.addEventListener('click', () => {
-    modalBack.style.display = 'flex';
-    modalBack.setAttribute('aria-hidden', 'false');
-  });
+    const currentSlide = state.slides[state.currentIndex];
+    els.lightboxArea.innerHTML = ''; // Limpa anterior
 
-  if (closeModal) closeModal.addEventListener('click', () => {
-    modalBack.style.display = 'none';
-    modalBack.setAttribute('aria-hidden', 'true');
-  });
-
-  if (confirmPay) confirmPay.addEventListener('click', () => {
-    modalBack.style.display = 'none';
-    modalBack.setAttribute('aria-hidden', 'true');
-    window.open(PAYMENT_LINK, '_blank'); // Abre em nova aba
-  });
-
-  if (modalBack) modalBack.addEventListener('click', (e) => { 
-    if (e.target === modalBack) { 
-      modalBack.style.display = 'none'; 
-      modalBack.setAttribute('aria-hidden', 'true'); 
-    } 
-  });
-
-  // Preview Rápida (Modal) - Lógica Alterada para RANDOMIZAÇÃO
-  if (previewBtn) previewBtn.addEventListener('click', () => {
-    
-    // 1. Pega uma mídia aleatória, NÃO a ativa do carrossel.
-    const media = getRandomMedia();
-    
-    // Limpa a área de preview
-    previewArea.innerHTML = '';
-
-    if (media.isVideo) {
-      // Cria um elemento de vídeo para o modal (com controles e som)
+    if (currentSlide.type === 'video') {
+      // Cria vídeo com controles e SOM ATIVADO
       const vid = document.createElement('video');
+      vid.src = currentSlide.src;
       vid.controls = true;
       vid.autoplay = true;
-      vid.muted = false; // Permite áudio no modal
-      vid.style.width = '100%';
-      vid.style.height = '100%';
-      vid.style.objectFit = 'contain';
-      
-      const s = document.createElement('source');
-      s.src = media.src; // Usa o src aleatório
-      s.type = 'video/mp4';
-      vid.appendChild(s);
-      
-      previewArea.appendChild(vid);
-      
-      // Tenta reproduzir e lidar com o erro de autoplay bloqueado
-      vid.play().catch(() => { /* ignore */ });
-
+      vid.style.maxHeight = '100%';
+      els.lightboxArea.appendChild(vid);
     } else {
-      // Cria um elemento de imagem
       const img = document.createElement('img');
-      img.src = media.src; // Usa o src aleatório
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'contain';
-      previewArea.appendChild(img);
+      img.src = currentSlide.src;
+      els.lightboxArea.appendChild(img);
     }
 
-    previewBack.style.display = 'flex';
-    previewBack.setAttribute('aria-hidden', 'false');
-  });
+    els.lightbox.setAttribute('aria-hidden', 'false');
+  }
 
-  if (closePreview) closePreview.addEventListener('click', () => { 
-    // Garante que o vídeo pare ao fechar o modal
-    const videoInPreview = previewArea.querySelector('video');
-    if (videoInPreview) {
-      try { videoInPreview.pause(); videoInPreview.currentTime = 0; } catch (e) { /* ignore */ }
-    }
+  function closePreview() {
+    els.lightbox.setAttribute('aria-hidden', 'true');
+    els.lightboxArea.innerHTML = ''; // Destrói o vídeo para parar o som imediatamente
+    
+    // Retoma carrossel
+    state.isPlaying = true;
+    startTimer();
+    
+    // Garante que o vídeo do slide de fundo (sem som) volte a tocar
+    const currentSlide = state.slides[state.currentIndex];
+    if(currentSlide.videoEl) currentSlide.videoEl.play().catch(()=>{});
+  }
 
-    previewBack.style.display = 'none'; 
-    previewBack.setAttribute('aria-hidden', 'true'); 
-    previewArea.innerHTML = ''; 
-  });
-  
-  if (previewBack) previewBack.addEventListener('click', (e) => { 
-    if (e.target === previewBack) { 
-       // Garante que o vídeo pare ao clicar fora
-      const videoInPreview = previewArea.querySelector('video');
-      if (videoInPreview) {
-        try { videoInPreview.pause(); videoInPreview.currentTime = 0; } catch (e) { /* ignore */ }
-      }
+  // --- COMPRA ---
+  function goToCheckout() {
+    // Feedback visual rápido antes de abrir
+    const btns = [els.btnBuyDesktop, els.btnBuyMobile];
+    btns.forEach(b => { 
+      if(b) b.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> INDO...'; 
+    });
+    
+    setTimeout(() => {
+      window.open(CONFIG.paymentLink, '_blank');
+      // Reseta botões
+      if(els.btnBuyDesktop) els.btnBuyDesktop.innerHTML = '<span>QUERO ACESSO AGORA</span><i class="fa-solid fa-arrow-right"></i>';
+      if(els.btnBuyMobile) els.btnBuyMobile.innerHTML = 'COMPRAR AGORA';
+    }, 500);
+  }
 
-      previewBack.style.display = 'none'; 
-      previewBack.setAttribute('aria-hidden', 'true'); 
-      previewArea.innerHTML = ''; 
-    } 
-  });
+  // --- EVENTOS ---
+  function bindEvents() {
+    els.btnNext.addEventListener('click', () => { next(); });
+    els.btnPrev.addEventListener('click', () => { prev(); });
+    
+    // Swipe básico para mobile touch
+    let touchStartX = 0;
+    els.carousel.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+    els.carousel.addEventListener('touchend', e => {
+      const touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50) next();
+      if (touchEndX - touchStartX > 50) prev();
+    });
 
+    // Preview
+    els.btnPreview.addEventListener('click', openPreview);
+    els.lightboxClose.addEventListener('click', closePreview);
+    els.lightbox.addEventListener('click', (e) => {
+      if(e.target === els.lightbox) closePreview();
+    });
 
-  // --- INICIALIZAÇÃO ---
-  buildCarousel();
-  initCarousel();
+    // Checkout
+    if(els.btnBuyDesktop) els.btnBuyDesktop.addEventListener('click', goToCheckout);
+    if(els.btnBuyMobile) els.btnBuyMobile.addEventListener('click', goToCheckout);
+  }
+
+  // Start
+  init();
 });
