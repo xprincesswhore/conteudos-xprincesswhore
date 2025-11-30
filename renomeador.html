@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XPW Asset Manager v3</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <style>
+    body { background: #050505; color: #fff; font-family: 'Outfit', sans-serif; padding: 20px; text-align: center; }
+    h1 { color: #8b5cf6; margin-bottom: 5px; }
+    p { color: #9ca3af; font-size: 0.9rem; margin-bottom: 30px; }
+    
+    .box { border: 1px solid #333; padding: 25px; margin: 20px auto; border-radius: 16px; max-width: 500px; background: #111; }
+    
+    .file-input-wrapper { margin-bottom: 25px; text-align: left; }
+    label { display: block; margin-bottom: 8px; font-weight: 700; color: #c4b5fd; font-size: 1.1rem; }
+    small { display: block; color: #666; font-size: 0.8rem; margin-bottom: 8px; }
+    
+    input[type=file] {
+      width: 100%;
+      padding: 10px;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+    }
+
+    .btn-action { 
+      background: linear-gradient(90deg, #8b5cf6, #ec4899); 
+      color: white; border: none; padding: 18px; 
+      font-size: 1rem; font-weight: 800; border-radius: 12px; 
+      cursor: pointer; width: 100%; 
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+    .btn-action:active { transform: scale(0.98); }
+
+    .output-area { display: none; margin-top: 30px; animation: fadeIn 0.5s ease; }
+    
+    textarea { 
+      width: 100%; height: 250px; 
+      background: #0a0a0a; color: #4ade80; 
+      border: 1px solid #333; padding: 15px; 
+      border-radius: 10px; font-family: monospace; font-size: 0.85rem;
+      resize: vertical;
+    }
+
+    .btn-copy {
+      background: #fff; color: #000;
+      border: none; padding: 12px; 
+      border-radius: 8px; font-weight: 700;
+      margin-top: 10px; width: 100%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-copy.copied { background: #4ade80; color: #000; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <h1>Gerador de Assets v3</h1>
+  <p>Organize seus arquivos e gere o código pronto.</p>
+
+  <div class="box">
+    <div class="file-input-wrapper">
+      <label><i class="fa-solid fa-film"></i> 1. Vídeos MP4 (ou Gifs)</label>
+      <small>Priorize MP4 para melhor qualidade.</small>
+      <input type="file" id="gifInput" multiple accept="video/mp4, image/gif">
+    </div>
+
+    <div class="file-input-wrapper">
+      <label><i class="fa-solid fa-camera"></i> 2. Fotos (JPG/PNG)</label>
+      <small>Fotos da galeria.</small>
+      <input type="file" id="imgInput" multiple accept="image/jpeg, image/png, image/webp">
+    </div>
+
+    <button class="btn-action" onclick="processAssets()">
+      <i class="fa-solid fa-gear"></i> Processar & Baixar
+    </button>
+  </div>
+
+  <div id="output" class="output-area">
+    <h3 style="color:#fff; margin-bottom:10px;">Copie e cole no app.js:</h3>
+    <textarea id="jsCode" readonly></textarea>
+    <button class="btn-copy" id="btnCopy" onclick="copyToClipboard()">
+      <i class="fa-regular fa-copy"></i> COPIAR CÓDIGO
+    </button>
+  </div>
+
+  <script>
+    async function processAssets() {
+      const zip = new JSZip();
+      const gifFiles = document.getElementById('gifInput').files;
+      const imgFiles = document.getElementById('imgInput').files;
+      
+      if(gifFiles.length === 0 && imgFiles.length === 0) {
+        alert("Por favor, selecione pelo menos alguns arquivos.");
+        return;
+      }
+
+      // INÍCIO DA CONFIG COMPLETA
+      let jsConfig = `const CONFIG = {
+  paymentLink: "https://go.invictuspay.app.br/uiu36mqyaf",
+  slideDuration: 4000,
+  assetsPath: 'assets/',
+
+  // --- ARQUIVOS GERADOS AUTOMATICAMENTE ---
+`;
+      
+      // 1. PROCESSAR GIFS/MP4
+      const gifList = [];
+      jsConfig += "  gifs: [\n";
+      Array.from(gifFiles).forEach((file, i) => {
+        const ext = file.name.split('.').pop().toLowerCase(); // Mantém extensão original
+        const newName = `${i + 1}.${ext}`; 
+        
+        zip.file(newName, file);
+        gifList.push(`    "${newName}"`);
+      });
+      jsConfig += gifList.join(",\n");
+      jsConfig += "\n  ],\n\n";
+
+      // 2. PROCESSAR IMAGENS
+      const imgList = [];
+      jsConfig += "  images: [\n";
+      Array.from(imgFiles).forEach((file, i) => {
+        const ext = file.name.split('.').pop().toLowerCase();
+        const newName = `foto${i + 1}.${ext}`;
+        zip.file(newName, file);
+        imgList.push(`    "${newName}"`);
+      });
+      jsConfig += imgList.join(",\n");
+      jsConfig += "\n  ],\n\n";
+
+      // 3. PLACEHOLDERS (Pega 1 gif e 1 foto para o fundo da galeria bloqueada)
+      // Se não tiver arquivos, usa genéricos
+      const p1 = gifList.length > 0 ? gifList[0].trim().replace(/"/g, '') : '1.mp4';
+      const p2 = imgList.length > 0 ? imgList[0].trim().replace(/"/g, '') : 'foto1.jpg';
+      
+      jsConfig += `  // Itens usados para preencher o fundo borrado
+  gridPlaceholders: ["${p1}", "${p2}"]
+};`;
+
+      // EXIBIR
+      document.getElementById('output').style.display = 'block';
+      const textArea = document.getElementById('jsCode');
+      textArea.value = jsConfig;
+
+      // GERAR ZIP
+      zip.generateAsync({type:"blob"}).then(function(content) {
+        saveAs(content, "assets_organizados.zip");
+      });
+      
+      // Scroll até o resultado
+      document.getElementById('output').scrollIntoView({behavior: "smooth"});
+    }
+
+    function copyToClipboard() {
+      const copyText = document.getElementById("jsCode");
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); // Para mobile
+      navigator.clipboard.writeText(copyText.value);
+      
+      const btn = document.getElementById("btnCopy");
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> CÓDIGO COPIADO!';
+      btn.classList.add('copied');
+      
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa-regular fa-copy"></i> COPIAR CÓDIGO';
+        btn.classList.remove('copied');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
