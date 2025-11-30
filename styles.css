@@ -358,7 +358,7 @@ header h1 {
 /* --- RESPONSIVE --- */
 @media (max-width: 900px) {
   .grid-layout { grid-template-columns: 1fr; gap: 30px; }
-  .carousel { aspect-ratio: 16/9; }
+  .carousel { aspect-ratio: 4/5; }
   .desktop-only { display: none; }
   .mobile-sticky-bar { display: flex; }
   
