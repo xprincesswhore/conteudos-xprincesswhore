@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const CONFIG = {
-    paymentLink: "https://go.invictuspay.app.br/uiu36mqyaf", // Preço Cheio (20)
-    discountLink: "https://go.invictuspay.app.br/uiu36mqyaf", // IMPORTANTE: COLOQUE AQUI O LINK DE R$ 10,00
+    paymentLink: "https://go.invictuspay.app.br/uiu36mqyaf", 
+    discountLink: "https://go.invictuspay.app.br/uiu36mqyaf", 
     slideDuration: 4000,
     assetsPath: 'assets/',
     gifs: ["1.mp4", "2.mp4", "3.mp4", "4.mp4", "5.mp4"],
@@ -66,7 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       this.bindEvents();
       this.startTimer();
-      this.handleVideoPlayback();
+      // CHANGE: ensure videos are paused on load (do not autoplay)
+      this.pauseAllVideos();
     }
 
     goToSlide(index) {
@@ -102,7 +103,9 @@ document.addEventListener("DOMContentLoaded", () => {
     
     pauseAllVideos() {
         this.slidesRef.forEach(s => {
-            if(s.videoEl) s.videoEl.pause();
+            if(s.videoEl) {
+                try { s.videoEl.pause(); s.videoEl.currentTime = 0; } catch (e) {}
+            }
         });
         this.pause();
     }
@@ -160,22 +163,18 @@ document.addEventListener("DOMContentLoaded", () => {
     exitIntentShown: false, 
 
     init() {
-      // Scroll Animations
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('is-visible'); });
       }, { threshold: 0.1 });
       document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
 
-      // Init Carousels
       this.carousels.push(new CarouselComponent('carousel-gifs-wrapper', CONFIG.gifs));
       this.carousels.push(new CarouselComponent('carousel-imgs-wrapper', CONFIG.images));
 
-      // Botões de Compra (Padrão 20)
       document.querySelectorAll('.action-buy').forEach(btn => {
         this.setupBuyButton(btn, CONFIG.paymentLink);
       });
 
-      // Botões de Compra (Desconto 10)
       document.querySelectorAll('.action-buy-discount').forEach(btn => {
         this.setupBuyButton(btn, CONFIG.discountLink);
       });
@@ -231,18 +230,15 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     setupExitIntent() {
-        // Verifica se já mostrou hoje
         const hasShownToday = localStorage.getItem('exitIntentShown_' + new Date().toDateString());
         if (hasShownToday) return;
 
-        // Desktop: Mouse sai da tela
         document.addEventListener('mouseleave', (e) => {
             if (e.clientY < 0 && !this.exitIntentShown) {
                 this.showExitModal();
             }
         });
 
-        // Mobile: Timeout 45s
         setTimeout(() => {
             if (!this.exitIntentShown) {
                 this.showExitModal();
@@ -292,6 +288,9 @@ document.addEventListener("DOMContentLoaded", () => {
         pModal.setAttribute('aria-hidden', 'false');
     }
   };
+
+  // CHANGE: expose App to window so chatbot image click can call openLightbox safely
+  window.App = App;
 
   App.init();
 });

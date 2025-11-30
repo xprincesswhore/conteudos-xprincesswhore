@@ -225,6 +225,14 @@ header h1 {
 .message.user .bubble { background: #0284c7; color: #fff; border-bottom-right-radius: 2px; }
 
 .chat-link { color: #38bdf8; font-weight: bold; text-decoration: underline; }
+/* Botão bonito dentro do chat */
+.chat-button {
+  display: inline-block; margin-top: 8px; background: #db2777; color: #fff;
+  padding: 8px 16px; border-radius: 20px; text-decoration: none;
+  font-weight: bold; font-size: 0.85rem; box-shadow: 0 4px 15px rgba(219, 39, 119, 0.4);
+  transition: transform 0.2s;
+}
+.chat-button:hover { transform: translateY(-2px); background: #be185d; }
 
 .quick-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 10px; }
 .opt-btn {
@@ -256,7 +264,7 @@ header h1 {
 @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- EXIT INTENT POPUP (NOVO ESTILO) --- */
+/* --- EXIT INTENT POPUP --- */
 .exit-popup {
   max-width: 450px; text-align: center;
   border: 1px solid var(--accent-secondary);
@@ -343,37 +351,78 @@ header h1 {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
 
-/* --- RESPONSIVE --- */
+/* --- RESPONSIVE MOBILE APP FEEL (NOVO) --- */
 @media (max-width: 900px) {
+  
   .grid-layout { grid-template-columns: 1fr; gap: 60px; }
   .section-block { margin-bottom: 80px; }
   .desktop-only { display: none; }
   .mobile-sticky-bar { display: flex; }
+  
   .controls { opacity: 1; background: none; padding: 10px; pointer-events: none; }
   .nav-btn { pointer-events: auto; background: rgba(0,0,0,0.6); }
   .indicators { display: none; }
   .preview-trigger { opacity: 1; }
   .grid-10x10 { grid-template-columns: repeat(5, 1fr); }
-  
-  /* Chatbot Mobile */
-  .chatbot-container { top: 10px; right: 10px; left: auto; }
-  .chat-window { width: 92vw; right: -5px; height: 60vh; top: 60px; }
+
+  /* CHANGE: interactive container (was pointer-events: none) */
+  .chatbot-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 9999;
+    /* CHANGE: pointer-events must be auto so chat is interactive on mobile */
+    pointer-events: auto;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .chat-toggle-btn {
+    position: absolute; bottom: 90px; right: 20px;
+    pointer-events: auto; z-index: 10000;
+  }
+  .chat-window {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 0; border: none;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    opacity: 1; pointer-events: auto;
+    display: flex; flex-direction: column;
+    background: #0f172a;
+  }
+  .chat-window[aria-hidden="false"] { transform: translateX(0); }
+  .chat-header {
+    padding: 15px 20px;
+    padding-top: max(15px, env(safe-area-inset-top)); /* Notch support */
+    background: #1e293b;
+  }
+  .chat-messages {
+    flex: 1; overflow-y: scroll; padding-bottom: 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chat-input-area {
+    padding: 15px;
+    padding-bottom: max(15px, env(safe-area-inset-bottom));
+    background: #1e293b; position: relative;
+  }
+  /* keep toggle hidden via sibling selector when chat open (mobile) */
+  .chat-window[aria-hidden="false"] ~ .chat-toggle-btn { display: none; }
 }
 
-.chat-button {
-  display: inline-block;
-  margin-top: 8px;
-  background: #db2777;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 20px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 15px rgba(219, 39, 119, 0.4);
-  transition: transform 0.2s;
+/* CHANGE: Photo bubble (bot-sent image) - force 4:5 crop and max-height for mobile */
+.photo-bubble {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
 }
-.chat-button:hover {
-  transform: translateY(-2px);
-  background: #be185d;
+.photo-bubble img {
+  display: block;
+  width: 100%;
+  /* force 4:5 aspect ratio and crop using object-fit */
+  aspect-ratio: 4 / 5;
+  height: auto;
+  max-height: 70vh; /* CHANGE: limits image to viewport height (mobile focus) */
+  object-fit: cover;
+  border-radius: 8px;
 }
+
+/* rest styles remain as previously defined (no changes) */
