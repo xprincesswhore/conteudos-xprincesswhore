@@ -3,25 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Conteúdo Exclusivo | xprincesswhore</title>
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="Conteúdo exclusivo e estético. Acesso vitalício.">
+  <title>xprincesswhore | Exclusive World</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
+  <div class="noise-overlay"></div>
   <div class="ambient-glow"></div>
 
   <div class="main-wrapper">
+    
     <header>
-      <div class="header-content fade-in-up">
-        <div class="profile-badge">XPW 💜</div>
-        <h1>xprincesswhore</h1>
+      <div class="header-content reveal-on-scroll">
+        <div class="profile-avatar">
+            <img src="assets/foto2.jpg" alt="Profile Avatar" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="profile-badge">XPW <i class="fa-solid fa-crown"></i></div>
+        <h1 class="glitch-text">xprincesswhore</h1>
         <p class="tagline">Gothic Aesthetics • Gifs • Exclusive World</p>
+        
+        <div class="mini-bio">
+          <p>Bem-vindo ao meu santuário digital. Estética, intimidade e arte visual sem censura.</p>
+        </div>
+
+        <div class="social-links">
+            <a href="#" class="social-icon" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#" class="social-icon" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        </div>
       </div>
     </header>
 
@@ -30,91 +46,95 @@
         
         <div class="visual-section">
           
-          <div class="section-block fade-in-up" style="animation-delay: 0.1s;">
-            <div class="section-title"><i class="fa-solid fa-video"></i> Preview GIFs</div>
-            <div class="carousel-container" id="carousel-gifs-wrapper">
+          <div class="section-block reveal-on-scroll">
+            <div class="section-header">
+                <div class="section-title"><i class="fa-solid fa-film"></i> GIF Collection</div>
+                <span class="badge-count">PREVIEW</span>
+            </div>
+            
+            <div class="carousel-container glass-border" id="carousel-gifs-wrapper">
               <div class="carousel">
-                <div class="slides"></div> <div class="controls">
-                  <button class="nav-btn prev-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="slides"></div> 
+                <div class="controls">
+                  <button class="nav-btn prev-btn" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
                   <div class="indicators"></div>
-                  <button class="nav-btn next-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                  <button class="nav-btn next-btn" aria-label="Próximo"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
                 <button class="preview-trigger" title="Expandir"><i class="fa-solid fa-expand"></i></button>
               </div>
             </div>
             <button class="see-more-btn" data-gallery-type="gifs">
-              <span>VER GALERIA COMPLETA (GIFS)</span>
-              <i class="fa-solid fa-lock"></i>
+              <span>ACESSAR GALERIA COMPLETA (GIFS)</span>
+              <div class="icon-lock"><i class="fa-solid fa-lock"></i></div>
             </button>
           </div>
 
-          <div class="section-block fade-in-up" style="animation-delay: 0.2s;">
-            <div class="section-title"><i class="fa-solid fa-camera"></i> Preview Fotos</div>
-            <div class="carousel-container" id="carousel-imgs-wrapper">
+          <div class="section-block reveal-on-scroll">
+            <div class="section-header">
+                <div class="section-title"><i class="fa-solid fa-camera"></i> Photo Set</div>
+                <span class="badge-count">EXCLUSIVE</span>
+            </div>
+
+            <div class="carousel-container glass-border" id="carousel-imgs-wrapper">
               <div class="carousel">
-                <div class="slides"></div> <div class="controls">
-                  <button class="nav-btn prev-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="slides"></div> 
+                <div class="controls">
+                  <button class="nav-btn prev-btn" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
                   <div class="indicators"></div>
-                  <button class="nav-btn next-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                  <button class="nav-btn next-btn" aria-label="Próximo"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
                 <button class="preview-trigger" title="Expandir"><i class="fa-solid fa-expand"></i></button>
               </div>
             </div>
             <button class="see-more-btn" data-gallery-type="imgs">
-              <span>VER GALERIA COMPLETA (FOTOS)</span>
-              <i class="fa-solid fa-lock"></i>
+              <span>ACESSAR GALERIA COMPLETA (FOTOS)</span>
+              <div class="icon-lock"><i class="fa-solid fa-lock"></i></div>
             </button>
           </div>
 
         </div>
 
-        <aside class="info-section fade-in-up" style="animation-delay: 0.3s;">
-          <div class="glass-card details">
-            <h2>O Pacote Completo</h2>
-            <p>Mergulhe no meu universo pessoal. Curadoria estética, previews animados e fotos em alta resolução.</p>
+        <aside class="info-section">
+          <div class="sticky-wrapper">
             
-            <ul class="feature-list">
-              <li>
-                <div class="icon-box"><i class="fa-solid fa-film"></i></div>
-                <div class="text">
-                  <strong>Pack de GIFs & Fotos</strong>
-                  <span>Conteúdo visual de alta fidelidade.</span>
-                </div>
-              </li>
-              <li>
-                <div class="icon-box"><i class="fa-solid fa-lock"></i></div>
-                <div class="text">
-                  <strong>Safe & Exclusive</strong>
-                  <span>Foco total na estética e sensualidade.</span>
-                </div>
-              </li>
-              <li>
-                <div class="icon-box"><i class="fa-solid fa-cloud-arrow-down"></i></div>
-                <div class="text">
-                  <strong>Acesso Vitalício</strong>
-                  <span>Download liberado para guardar pra sempre.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
+            <div class="glass-card details reveal-on-scroll">
+              <h2>O Pacote Completo</h2>
+              <p>Mergulhe no meu universo pessoal.</p>
+              <ul class="feature-list">
+                <li>
+                  <div class="icon-box"><i class="fa-solid fa-infinity"></i></div>
+                  <div class="text"><strong>Acesso Vitalício</strong><span>Pagamento único.</span></div>
+                </li>
+                <li>
+                  <div class="icon-box"><i class="fa-solid fa-fingerprint"></i></div>
+                  <div class="text"><strong>Conteúdo Autoral</strong><span>Fotos e GIFs exclusivos.</span></div>
+                </li>
+                 <li>
+                  <div class="icon-box"><i class="fa-solid fa-shield-halved"></i></div>
+                  <div class="text"><strong>100% Seguro</strong><span>Sigilo absoluto na fatura.</span></div>
+                </li>
+              </ul>
+            </div>
 
-          <div class="glass-card purchase-card desktop-only">
-            <div class="price-tag">
-              <span class="currency">R$</span>
-              <span class="value">20</span>
-              <span class="cents">,00</span>
+            <div class="glass-card purchase-card desktop-only reveal-on-scroll">
+              <div class="card-header">VIP ACCESS</div>
+              
+              <div class="price-container">
+                <div class="old-price">R$ 50,00</div>
+                <div class="current-price">R$ 20,00</div>
+              </div>
+              
+              <button class="cta-button pulse-anim action-buy">
+                DESBLOQUEAR AGORA <i class="fa-solid fa-unlock"></i>
+              </button>
+              
+              <div class="payment-methods">
+                <i class="fa-brands fa-pix"></i>
+                <i class="fa-brands fa-cc-mastercard"></i>
+                <i class="fa-brands fa-cc-visa"></i>
+              </div>
             </div>
-            <p class="secure-text"><i class="fa-solid fa-shield-cat"></i> Pagamento Seguro via InvictusPay</p>
-            
-            <button class="cta-button pulse-anim action-buy">
-              <span>QUERO ACESSO AGORA</span>
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-            
-            <div class="payment-methods">
-              <i class="fa-brands fa-pix"></i>
-              <i class="fa-regular fa-credit-card"></i>
-            </div>
+
           </div>
         </aside>
       </div>
@@ -127,45 +147,98 @@
 
   <div class="mobile-sticky-bar">
     <div class="price-info">
-      <span class="lbl">Total:</span>
+      <span class="lbl">Acesso Vitalício</span>
       <span class="val">R$ 20,00</span>
     </div>
-    <button class="cta-button-mobile action-buy">
-      COMPRAR AGORA
+    <button class="cta-button-mobile action-buy">QUERO ACESSO</button>
+  </div>
+
+  <div class="chatbot-container" id="chatbot">
+    <button class="chat-toggle-btn" id="chatToggle" aria-label="Abrir Chat">
+      <div class="notification-dot"></div>
+      <img src="assets/foto2.jpg" alt="Avatar" class="chat-avatar-icon" onerror="this.src='https://via.placeholder.com/50/38bdf8/000?text=XP'">
+      <span class="chat-label">Dúvidas?</span>
     </button>
+
+    <div class="chat-window" aria-hidden="true">
+      <div class="chat-header">
+        <div class="header-info">
+          <div class="status-indicator online"></div>
+          <div style="margin-left:8px;">
+            <span class="name">xprincesswhore</span>
+            <div class="status">Online agora</div>
+          </div>
+        </div>
+        <button class="close-chat" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+            <div class="bubble">Oi! 😈 Vi que você está olhando meu site... Tem alguma dúvida ou quer saber o que tem no pack?</div>
+        </div>
+        <div class="quick-options" id="quickOptions">
+            <button class="opt-btn" data-msg="É seguro o pagamento?">É seguro?</button>
+            <button class="opt-btn" data-msg="O que vem no pack?">O que vem no pack?</button>
+            <button class="opt-btn" data-msg="Sigilo na fatura?">Sigilo na fatura?</button>
+            <button class="opt-btn" data-msg="Quero comprar agora">Quero comprar 🔥</button>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Digite sua dúvida...">
+        <button id="chatSend" aria-label="Enviar"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="exitModal" aria-hidden="true" style="z-index: 9999;">
+    <div class="modal-content glass-card exit-popup">
+      <button class="close-modal" id="closeExit" style="top: 10px; right: 10px;"><i class="fa-solid fa-xmark"></i></button>
+      
+      <div class="exit-content">
+        <div class="exit-icon"><i class="fa-solid fa-hand"></i></div>
+        <h2>ESPERE! NÃO VÁ...</h2>
+        <p>Você quase perdeu essa chance. Só agora, leve o <strong>Pack Completo</strong> com 50% de desconto extra.</p>
+        
+        <div class="exit-price-box">
+           <span class="exit-old">De R$ 20,00</span>
+           <span class="exit-new">Por R$ 10,00</span>
+        </div>
+
+        <button class="cta-button action-buy-discount pulse-anim">
+            QUERO POR R$ 10 <i class="fa-solid fa-check"></i>
+        </button>
+        
+        <button class="btn-text-only" id="rejectOffer">Não, prefiro pagar R$ 20 depois.</button>
+      </div>
+    </div>
   </div>
 
   <div class="modal-overlay" id="previewModal" aria-hidden="true">
     <div class="modal-content lightbox-layout">
-      <button class="close-modal" id="closePreview"><i class="fa-solid fa-xmark"></i></button>
+      <button class="close-modal" id="closePreview" aria-label="Fechar Preview"><i class="fa-solid fa-xmark"></i></button>
       <div id="previewArea" class="media-container"></div>
     </div>
   </div>
 
   <div class="modal-overlay" id="galleryModal" aria-hidden="true">
     <div class="modal-content gallery-layout">
-      <button class="close-modal" id="closeGallery"><i class="fa-solid fa-xmark"></i></button>
-      
+      <button class="close-modal" id="closeGallery" aria-label="Fechar Galeria"><i class="fa-solid fa-xmark"></i></button>
       <div class="gallery-header">
-        <h3><i class="fa-solid fa-lock"></i> Conteúdo VIP</h3>
-        <p>Esta galeria contém +100 arquivos exclusivos.</p>
+        <h3>Conteúdo Bloqueado</h3>
+        <p>Libere o acesso para ver +100 arquivos.</p>
       </div>
-
       <div class="locked-grid-container">
         <div class="paywall-overlay">
-          <div class="lock-icon"><i class="fa-solid fa-lock"></i></div>
-          <h3>Galeria Bloqueada</h3>
-          <p>Libere o acesso completo agora.</p>
-          <button class="cta-button pulse-anim action-buy" style="max-width: 280px;">
-            DESBLOQUEAR TUDO (R$ 20)
-          </button>
+          <i class="fa-solid fa-lock" style="font-size: 2rem; margin-bottom: 15px; color: #db2777;"></i>
+          <button class="cta-button action-buy" style="padding: 12px 25px;">Desbloquear (R$ 20)</button>
         </div>
-        
         <div class="grid-10x10" id="lockedGrid"></div>
       </div>
     </div>
   </div>
 
+  <script src="chatbot.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
