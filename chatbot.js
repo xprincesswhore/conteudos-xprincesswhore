@@ -1,17 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   /* ===========================
-     CONFIGURAÇÕES GERAIS
+     CONFIGURAÇÕES DO CHAT
      =========================== */
-  const CONFIG = {
-    paymentLink: "https://go.invictuspay.app.br/uiu36mqyaf",
-    // freePhotoUrl: "assets/foto1.jpg", // OBS: Não é mais usado diretamente, agora puxamos da lista.
+  const CHAT_CONFIG = {
+    // Usa o link global do App se disponível, senão fallback
+    paymentLink: window.App?.CONFIG?.paymentLink || "https://go.invictuspay.app.br/uiu36mqyaf",
     typingSpeed: 35, // ms por caractere
     messageDelay: 800 // atraso entre balões
   };
 
   /* ===========================
-     ÁRVORE DE DECISÃO (FLOW SCRIPT EXPANDIDO)
+     ÁRVORE DE DECISÃO (LÓGICA)
      =========================== */
   const CONVERSATION_TREE = {
     start: {
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
     },
 
-    // --- RAMO DE PROVOCAÇÃO E FLERTE (EXPANDIDO) ---
+    // --- RAMO DE PROVOCAÇÃO ---
     intro_doing: {
       text: [
         "Tô aqui na cama, o dedo na tela... mas a mente tá ocupada com você.",
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
     },
 
-    // --- RAMO DE FOTOS (FREE INCENTIVE) ---
+    // --- RAMO DE FOTOS ---
     photos_intro: {
       text: [
         "O que tem de novo? Hummm... eu gravei um vídeo agorinha.",
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     photos_send: {
-      type: "action_photo", // Gatilho para enviar a foto (agora aleatória)
+      type: "action_photo", 
       text: [
         "Aproveita que daqui a pouco eu apago... 🤫",
         "👇"
@@ -136,7 +136,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ]
     },
 
-    // --- RAMOS DE VENDA (CONVERSÃO) ---
     sales_challenge: {
       text: [
         "Se quer me dominar, precisa mostrar que tem poder de compra, amor.",
@@ -174,20 +173,20 @@ document.addEventListener("DOMContentLoaded", () => {
         "O portal está aberto e ninguém vai saber que você entrou. É nosso segredo.",
         "Clica no botão abaixo, me encontre no VIP. 😘"
       ],
-      options: [] // Fim da linha
+      options: [] // Fim
     }
   };
 
   /* ===========================
-     ENGINE (LÓGICA)
+     ENGINE (DECISION TREE)
      =========================== */
   class DecisionTreeEngine {
     constructor() {
+      // Elementos do DOM (Verificação de segurança incluída no init)
       this.els = {
         window: document.querySelector(".chat-window"),
         msgs: document.getElementById("chatMessages"),
         inputArea: document.querySelector(".chat-input-area"), 
-        quickOpts: document.getElementById("quickOptions"), // Objeto antigo, agora não usado para botões
         toggleBtn: document.getElementById("chatToggle"),
         closeBtn: document.querySelector(".close-chat"),
         badge: document.querySelector(".notification-dot")
@@ -199,69 +198,73 @@ document.addEventListener("DOMContentLoaded", () => {
         currentNode: null
       };
 
-      this.init();
+      // Só inicia se o HTML existir
+      if (this.els.window && this.els.msgs) {
+        this.init();
+      } else {
+        console.warn("Elementos do Chatbot não encontrados no HTML.");
+      }
     }
 
     init() {
-      // 1. Ajuste de UI: Esconde o container antigo de botões
-      this.els.inputArea.style.display = "none";
-      this.els.quickOpts.style.display = "none"; 
+      // Esconde elementos legados se existirem
+      const legacyOpts = document.getElementById("quickOptions");
+      if(legacyOpts) legacyOpts.style.display = "none";
+      if(this.els.inputArea) this.els.inputArea.style.display = "none";
       
       this.bindEvents();
       
-      // 2. Inicia fluxo
+      // Inicia fluxo após delay inicial
       setTimeout(() => {
         this.transitionTo("start");
-        if (!this.state.isOpen) this.els.badge.classList.add("pulse-active");
+        if (!this.state.isOpen && this.els.badge) {
+          this.els.badge.classList.add("pulse-active");
+        }
       }, 2000);
     }
 
     /* --- HELPERS --- */
-
     getRandom(array) {
         return array[Math.floor(Math.random() * array.length)];
     }
 
     getRandomImage() {
-        if (window.App && window.App.CONFIG && window.App.CONFIG.images) {
-            // Usa a lista de imagens do app.js (ex: foto1.jpg, foto2.jpg...)
+        // Tenta pegar a configuração global do app.js
+        if (window.App && window.App.CONFIG && window.App.CONFIG.images && window.App.CONFIG.images.length > 0) {
             return this.getRandom(window.App.CONFIG.images);
         }
-        // Fallback robusto
-        console.warn("App.CONFIG.images não encontrado. Usando fallback estático.");
-        return "assets/foto1.jpg"; 
+        // Fallback seguro caso app.js não tenha carregado
+        return "foto1.jpg"; 
     }
 
-    /* --- Navegação e Renderização --- */
-
+    /* --- NAVEGAÇÃO E LÓGICA --- */
     async transitionTo(nodeId) {
       const node = CONVERSATION_TREE[nodeId];
       if (!node) return;
 
       this.state.currentNode = nodeId;
 
-      // 1. Limpa e desativa botões de nodes anteriores
+      // Desabilita botões anteriores
       const previousOptions = this.els.msgs.querySelector(".current-options-block");
       if (previousOptions) {
         previousOptions.classList.remove("current-options-block");
-        // Desabilita interação nos botões anteriores
         Array.from(previousOptions.querySelectorAll('button')).forEach(btn => btn.disabled = true);
       }
       
-      // 2. Simula Digitação e Envio de Texto
+      // Envia mensagens do bot com typing effect
       await this.processNodeMessages(node.text);
 
-      // 3. Ações Especiais (Foto, Checkout)
+      // Ações Especiais
       if (node.type === "action_photo") {
         const randomImage = this.getRandomImage();
         await this.sendPhoto(randomImage);
       } 
       else if (node.type === "action_checkout") {
         this.renderCheckoutButton();
-        return; // Fim do fluxo padrão
+        return; // Encerra fluxo aqui
       }
 
-      // 4. Renderiza Próximas Opções
+      // Renderiza novas opções
       if (node.options && node.options.length > 0) {
         this.renderOptions(node.options);
       }
@@ -277,31 +280,32 @@ document.addEventListener("DOMContentLoaded", () => {
         this.els.msgs.appendChild(typing);
         this.scrollToBottom();
 
-        const typingTime = Math.max(800, msg.length * CONFIG.typingSpeed);
+        // Tempo de leitura dinâmico
+        const typingTime = Math.max(800, msg.length * CHAT_CONFIG.typingSpeed);
         await new Promise(r => setTimeout(r, typingTime));
 
         typing.remove();
         this.addBotMessage(msg);
         
-        await new Promise(r => setTimeout(r, CONFIG.messageDelay));
+        // Pausa entre balões
+        await new Promise(r => setTimeout(r, CHAT_CONFIG.messageDelay));
       }
 
       this.state.isTyping = false;
     }
 
     renderOptions(options) {
-      // NOVO: Renderiza as opções dentro de um container que segue o fluxo do chat
       const optionsBlock = document.createElement("div");
-      optionsBlock.className = "message bot options-block current-options-block"; // Adicionado current-options-block
+      optionsBlock.className = "message bot options-block current-options-block"; 
+      
       const bubble = document.createElement("div");
-      bubble.className = "bubble tree-options"; // Reutiliza estilo vertical
+      bubble.className = "bubble tree-options";
 
       options.forEach(opt => {
         const btn = document.createElement("button");
         btn.className = "tree-btn fade-in";
         btn.innerText = opt.label;
-        btn.onclick = (e) => {
-          // Garante que o clique só ocorra se não estiver digitando
+        btn.onclick = () => { 
           if (!this.state.isTyping) { 
             this.addUserMessage(opt.label);
             this.transitionTo(opt.next);
@@ -315,8 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
       this.scrollToBottom();
     }
 
-    /* --- Componentes Visuais --- */
-
+    /* --- COMPONENTES VISUAIS --- */
     addBotMessage(text) {
       const div = document.createElement("div");
       div.className = "message bot";
@@ -334,27 +337,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async sendPhoto(photoUrl) {
-      // Simula upload
+      // Indicador de Upload Fake
       const indicator = document.createElement("div");
       indicator.className = "upload-indicator";
-      indicator.innerHTML = `<div class="progress-bar"><div class="fill"></div></div><small>Enviando mídia...</small>`;
+      // Estilo inline para garantir funcionamento sem CSS extra complexo
+      indicator.style.padding = "10px";
+      indicator.style.fontSize = "0.8rem";
+      indicator.style.color = "#aaa";
+      indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Enviando mídia privada...`;
+      
       this.els.msgs.appendChild(indicator);
       this.scrollToBottom();
 
       await new Promise(r => setTimeout(r, 1500));
       indicator.remove();
 
+      // Renderiza Imagem
       const div = document.createElement("div");
       div.className = "message bot";
       const wrap = document.createElement("div");
       wrap.className = "bubble photo-bubble";
       
+      // Caminho correto usando o assetsPath se disponível globalmente
+      const basePath = window.App?.CONFIG?.assetsPath || "assets/";
+      // Se a photoUrl já vier com http, usa ela, senão concatena
+      const fullSrc = photoUrl.startsWith('http') ? photoUrl : basePath + photoUrl;
+
       const img = document.createElement("img");
-      img.src = "assets/" + photoUrl; // Usa o caminho base 'assets/' do app.js
-      img.alt = "Preview";
+      img.src = fullSrc;
+      img.alt = "Preview Exclusiva";
       img.onclick = () => { 
-          // O openLightbox deve ser chamado via App global, se existir
-          if (window.App?.openLightbox) window.App.openLightbox("assets/" + photoUrl, "image"); 
+          // Abre no Lightbox Global se disponível
+          if (window.App?.openLightbox) window.App.openLightbox(fullSrc, "image"); 
       };
       
       wrap.appendChild(img);
@@ -367,7 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const wrap = document.createElement("div");
       wrap.className = "chat-cta-wrapper slide-up";
       wrap.innerHTML = `
-        <a href="${CONFIG.paymentLink}" target="_blank" class="chat-main-btn pulse-btn">
+        <a href="${CHAT_CONFIG.paymentLink}" target="_blank" class="chat-main-btn pulse-btn">
             🔓 ACESSAR CONTEÚDO VIP AGORA
         </a>
         <div class="cta-sub">Acesso imediato e anônimo</div>
@@ -377,17 +391,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     scrollToBottom() {
-      this.els.msgs.scrollTop = this.els.msgs.scrollHeight;
+      if(this.els.msgs) this.els.msgs.scrollTop = this.els.msgs.scrollHeight;
     }
 
     bindEvents() {
       const toggle = () => {
         this.state.isOpen = !this.state.isOpen;
         this.els.window.setAttribute("aria-hidden", !this.state.isOpen);
+        
+        // Esconde o botão flutuante ao abrir o chat
         if (this.els.toggleBtn) this.els.toggleBtn.style.display = this.state.isOpen ? "none" : "flex";
         
         if (this.state.isOpen) {
-            this.els.badge.classList.remove("pulse-active");
+            if(this.els.badge) this.els.badge.classList.remove("pulse-active");
             this.scrollToBottom();
         }
       };
@@ -397,6 +413,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Inicialização
-  window.ChatEngine = new DecisionTreeEngine();
+  // Inicializa a Engine
+  new DecisionTreeEngine();
 });
